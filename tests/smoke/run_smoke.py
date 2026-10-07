@@ -21,13 +21,13 @@ TINY_LM = "trl-internal-testing/tiny-Qwen2ForCausalLM-2.5"
 TINY_CLS = "trl-internal-testing/tiny-Qwen2ForSequenceClassification-2.5"
 
 SMOKE_YAML = {
-    "base.yaml": f"""seed: 6304
-base_model: {TINY_LM}
-reward_model: {TINY_CLS}
-reward_tokenizer: {TINY_LM}
-ai_judge_model: {TINY_LM}
-value_model_init: {TINY_CLS}
-dtype: float32
+    "base.yaml": """seed: 6304
+base_model: {lm}
+reward_model: {cls}
+reward_tokenizer: {lm}
+ai_judge_model: {lm}
+value_model_init: {cls}
+dtype: {dtype}
 quantize_frozen_models: false
 lora: {{r: 4, alpha: 8, dropout: 0.05, target_modules: [q_proj, v_proj]}}
 value_lora: {{r: 4, alpha: 8, dropout: 0.05, target_modules: [q_proj, v_proj]}}
@@ -179,12 +179,14 @@ COMMANDS = [
 ]
 
 
-def build(work: Path):
+def build(work: Path, dtype: str = "float32"):
     if work.exists():
         shutil.rmtree(work)
     ignore = shutil.ignore_patterns(".venv", ".git", "outputs", "results", "checkpoints", "__pycache__", "*.pyc", "smoke_work*")
     shutil.copytree(REPO, work, ignore=ignore)
     for name, text in SMOKE_YAML.items():
+        if name == "base.yaml":
+            text = text.format(lm=TINY_LM, cls=TINY_CLS, dtype=dtype)
         (work / "configs" / name).write_text(text, encoding="utf-8")
 
     for rel, n in SUBSETS.items():
@@ -276,13 +278,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--workdir", default=str(REPO / "smoke_work"))
     ap.add_argument("--no-build", action="store_true")
+    ap.add_argument("--dtype", default="float16", help="model dtype; float16 matches the GPU runs")
     ap.add_argument("--sync", action="store_true", help="with --no-build: refresh code in the existing env")
     ap.add_argument("--only", nargs="*", help="command prefixes to run (default: all)")
     args = ap.parse_args()
     work = Path(args.workdir)
     if not args.no_build:
-        build(work)
-        print("built smoke env at", work)
+        build(work, args.dtype)
+        print("built smoke env at", work, "dtype", args.dtype)
     elif args.sync:
         sync_code(work)
     sys.exit(0 if run(work, sys.executable, args.only) else 1)

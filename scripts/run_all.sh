@@ -4,13 +4,17 @@
 #
 #   bash scripts/run_all.sh            # everything
 #   bash scripts/run_all.sh t1 t3      # only some stages (t1 t2 t3 t4 t5 fig)
-set -euo pipefail
+set -uo pipefail   # no -e: a failing step is recorded and later independent stages still run
 cd "$(dirname "$0")/.."
 PY=${PY:-python}
 STAGES=${*:-"t1 t2 t3 t4 t5 fig"}
 
 have() { [ -e "$1" ]; }
-run() { echo; echo ">>> $*"; "$PY" -m "$@"; }
+FAILED=()
+run() {
+  echo; echo ">>> $*"
+  if ! "$PY" -m "$@"; then echo "!!! FAILED: $*"; FAILED+=("$*"); return 1; fi
+}
 
 for s in $STAGES; do case $s in
 t1)
@@ -51,3 +55,8 @@ fig)
 *) echo "unknown stage $s"; exit 1 ;;
 esac; done
 echo; echo "done: $STAGES"
+if [ ${#FAILED[@]} -gt 0 ]; then
+  echo "FAILED steps (${#FAILED[@]}):"
+  for f in "${FAILED[@]}"; do echo "  $f"; done
+  exit 1
+fi
