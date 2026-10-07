@@ -4,6 +4,7 @@ import argparse
 
 from common.data import load_yaml, read_jsonl
 from common.models import load_policy, load_reward_model, load_tokenizer
+from common.policy_eval import run_heldout_eval
 
 
 def load_evaluation_bundle(config_path: str, adapter: str):
@@ -17,16 +18,21 @@ def load_evaluation_bundle(config_path: str, adapter: str):
     }
 
 
+def evaluate(config_path: str, adapter: str | None, name: str):
+    cfg = load_yaml(config_path)
+    return run_heldout_eval(cfg, adapter, name, f"{cfg['results_dir']}/eval",
+                            max_new_tokens=int(cfg.get("eval_max_response_length", cfg["max_completion_length"])))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default="configs/grpo.yaml")
-    ap.add_argument("--adapter", required=True)
+    ap.add_argument("--adapter", required=True, help="adapter dir, 'midpoint' for the supplied checkpoint, or 'none' for SFT")
     ap.add_argument("--name", default="standard")
     args = ap.parse_args()
-    load_evaluation_bundle(args.config, args.adapter)
-    raise NotImplementedError(
-        "TODO(student): implement the common held-out GRPO evaluation and save the required metrics/examples."
-    )
+    cfg = load_yaml(args.config)
+    adapter = {"none": None, "sft": None, "midpoint": cfg["paths"]["grpo_midpoint_policy"]}.get(args.adapter.lower(), args.adapter)
+    evaluate(args.config, adapter, args.name)
 
 
 if __name__ == "__main__":

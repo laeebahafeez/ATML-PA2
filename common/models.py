@@ -228,7 +228,9 @@ def token_values(value_model, input_ids, attention_mask):
         head = value_model.classifier
     else:
         raise RuntimeError("Could not locate scalar value head")
-    return head(hidden).squeeze(-1)
+    # The trainable head is kept in fp32 (see common.rl_utils.ensure_fp32_trainable).
+    head_dtype = next(head.parameters()).dtype
+    return head(hidden.to(head_dtype)).squeeze(-1).float()
 
 
 def trainable_parameters(model):

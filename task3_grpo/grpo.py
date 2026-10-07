@@ -4,6 +4,10 @@ import torch
 
 from common.metrics import masked_mean, sampled_kl, sample_entropy
 
+# Numerical tolerance below which a prompt group's reward std counts as zero
+# (uninformative group: every advantage is ~0). Used by training logs and the K study.
+ZERO_STD_TOL = 1e-6
+
 
 def group_relative_advantages(rewards: torch.Tensor, group_ids: torch.Tensor, eps: float = 1e-6):
     """Return one scalar advantage per sampled completion.
@@ -11,10 +15,21 @@ def group_relative_advantages(rewards: torch.Tensor, group_ids: torch.Tensor, ep
     `group_ids[i]` identifies which prompt produced reward `rewards[i]`.
     Validate this implementation against the group-relative definition in the assignment manual.
     """
-    # Starter implementation: students must validate the grouping logic carefully.
-    mean = rewards.mean()
-    std = rewards.std(unbiased=False).clamp_min(eps)
-    return (rewards - mean) / std
+    # FIX: the starter normalized with the mean/std of the WHOLE batch and ignored
+    # group_ids, so with several prompts per batch an "easy" prompt's completions
+    # all got positive advantages and a "hard" prompt's all got negative ones.
+    # GRPO's baseline is the per-prompt group mean: A_k = (r_k - mu_g) / (sigma_g + eps).
+    # A zero-std (uninformative) group therefore gets exactly zero advantage.
+    rewards = rewards.float()
+    group_ids = torch.as_tensor(group_ids, device=rewards.device)
+    adv = torch.zeros_like(rewards)
+    for g in torch.unique(group_ids):
+        idx = group_ids == g
+        r = rewards[idx]
+        mean = r.mean()
+        std = r.std(unbiased=False)
+        adv[idx] = (r - mean) / (std + eps)
+    return adv
 
 
 def grpo_policy_loss(

@@ -8,7 +8,8 @@ from pathlib import Path
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
-from common.data import load_yaml, read_jsonl
+from common.data import load_yaml, read_jsonl, repo_path
+from common.logging_utils import append_jsonl
 from common.models import resolve_dtype
 
 LABELS = {
@@ -102,10 +103,68 @@ def judge_one(tok, model, prompt, response, max_new_tokens=64):
     return parse_json(generated)
 
 
+@torch.no_grad()
+def judge_batch(tok, model, prompts, responses, max_new_tokens=64):
+    """Batched form of `judge_one`: identical judge prompt, chat template, greedy decoding and
+    parser; only several examples share one left-padded generate call."""
+    texts = [
+        tok.apply_chat_template(
+            [{"role": "user", "content": JUDGE_PROMPT.format(prompt=p, response=r)}],
+            tokenize=False,
+            add_generation_prompt=True,
+        )
+        for p, r in zip(prompts, responses)
+    ]
+    enc = tok(texts, return_tensors="pt", padding=True, add_special_tokens=False)
+    enc = {k: v.to(next(model.parameters()).device) for k, v in enc.items()}
+    out = model.generate(
+        **enc,
+        max_new_tokens=max_new_tokens,
+        do_sample=False,
+        pad_token_id=tok.eos_token_id,
+        eos_token_id=tok.eos_token_id,
+    )
+    width = enc["input_ids"].shape[1]
+    return [parse_json(tok.decode(row[width:], skip_special_tokens=True)) for row in out]
+
+
+def judged_path(cfg, policy):
+    return repo_path(cfg["results_dir"]) / "task4_safety" / f"judged_{policy}.jsonl"
+
+
+def judge_file(cfg, tok, model, policy, batch_size=8):
+    src = repo_path(cfg["results_dir"]) / "task4_safety" / f"generated_{policy}.jsonl"
+    if not src.exists():
+        print(f"[{policy}] no generations at {src}; skipping")
+        return
+    rows = read_jsonl(src)
+    dst = judged_path(cfg, policy)
+    done = {int(r["xstest_id"]) for r in read_jsonl(dst)} if dst.exists() else set()
+    todo = [r for r in rows if int(r["xstest_id"]) not in done]
+    print(f"[{policy}] {len(rows)} responses, {len(done)} already judged, {len(todo)} to judge")
+    max_new = int(cfg.get("judge_max_new_tokens", 64))
+    for s in range(0, len(todo), batch_size):
+        chunk = todo[s : s + batch_size]
+        if batch_size == 1:
+            labels = [judge_one(tok, model, chunk[0]["prompt"], chunk[0]["response"], max_new)]
+        else:
+            labels = judge_batch(tok, model, [r["prompt"] for r in chunk], [r["response"] for r in chunk], max_new)
+        for r, lab in zip(chunk, labels):
+            append_jsonl(dst, {
+                "xstest_id": int(r["xstest_id"]), "policy": policy, "benchmark_class": r["benchmark_class"],
+                "type": r["type"], "response_tokens": r["response_tokens"],
+                "judge_label": lab["label"], "judge_confidence": lab["confidence"], "judge_rationale": lab["rationale_tag"],
+            })
+        if (s // batch_size) % 10 == 0:
+            print(f"[{policy}] judged {min(s + batch_size, len(todo))}/{len(todo)}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default="configs/feedback.yaml")
     ap.add_argument("--input", help="Optional generated JSONL file to inspect")
+    ap.add_argument("--policies", nargs="+", default=["sft", "dpo", "ppo", "grpo"])
+    ap.add_argument("--batch-size", type=int, default=8, help="1 = call the released judge_one per example")
     args = ap.parse_args()
     cfg = load_yaml(args.config)
     tok, model = load_judge(cfg)
@@ -113,9 +172,8 @@ def main():
     if args.input:
         rows = read_jsonl(args.input)
         print("Input rows:", len(rows))
-    raise NotImplementedError(
-        "TODO(student): apply judge_one to your frozen-policy response files, cache the labels, and implement the required Task 4 aggregation."
-    )
+    for policy in args.policies:
+        judge_file(cfg, tok, model, policy, args.batch_size)
 
 
 if __name__ == "__main__":

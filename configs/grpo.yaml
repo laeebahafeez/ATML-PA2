@@ -16,3 +16,9 @@ output: outputs/task3_grpo/standard
 results_dir: results/task3_grpo
 group_cache: cached/grpo_k_cache.jsonl
 cache_generation_cap: 768
+
+# Common held-out evaluation (identical for every GRPO condition).
+eval_prompts: 64
+eval_batch_size: 8
+eval_max_response_length: 768
+reward_max_length: 1280

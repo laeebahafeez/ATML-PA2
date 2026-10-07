@@ -32,3 +32,9 @@ max_grad_norm: 1.0
 output: outputs/task2_ppo/standard
 results_dir: results/task2_ppo
 cached_rollouts: cached/ppo_rollout.pt
+
+# Common held-out evaluation (identical for the standard run, every fork, and the reference points).
+eval_prompts: 64            # first N prompts of data/rl_prompt_pool_eval.jsonl
+eval_batch_size: 8
+# Cached-rollout clipping study: inner gradient steps on the fixed batch per epsilon.
+cached_clip_steps: 4

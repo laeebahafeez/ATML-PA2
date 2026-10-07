@@ -3,9 +3,9 @@ from __future__ import annotations
 import argparse
 import pandas as pd
 
-from common.data import load_yaml, repo_path
+from common.data import load_yaml, repo_path, write_jsonl
 from common.generation import batch_generate
-from common.models import load_policy, load_tokenizer
+from common.models import clear_gpu, load_policy, load_tokenizer
 
 
 def policy_specs(cfg):
@@ -53,19 +53,42 @@ def generate_for_policy(cfg, policy_name: str, batch_size: int = 4):
                 "response": response,
                 "response_tokens": int(n_tok),
             })
+    clear_gpu(model)
+    del model
+    clear_gpu()
     return records
+
+
+def output_path(cfg, policy_name: str):
+    return repo_path(cfg["results_dir"]) / "task4_safety" / f"generated_{policy_name}.jsonl"
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default="configs/feedback.yaml")
+    ap.add_argument("--policies", nargs="+", help="subset of sft dpo ppo grpo (default: all four)")
+    ap.add_argument("--batch-size", type=int, default=8)
+    ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
     cfg = load_yaml(args.config)
-    print("Policies:", list(policy_specs(cfg)))
+    specs = policy_specs(cfg)
+    print("Policies:", list(specs))
     print("XSTest rows:", len(load_xstest(cfg)))
-    raise NotImplementedError(
-        "TODO(student): call generate_for_policy for SFT/DPO/PPO/GRPO, save common deterministic responses, and preserve the fixed prompt order."
-    )
+
+    # Frozen standard checkpoints only (Task 1 Step 1, Task 2 Step 1, Task 3 Step 1).
+    for name in args.policies or list(specs):
+        adapter = specs[name]
+        if adapter is not None and not (repo_path(adapter) / "adapter_config.json").exists():
+            raise FileNotFoundError(f"{name}: standard adapter not found at {adapter}; finish Tasks 1-3 first.")
+        out = output_path(cfg, name)
+        if out.exists() and not args.force:
+            print(f"[{name}] exists, skipping: {out}")
+            continue
+        # Same greedy decoding, cap and prompt order for every policy.
+        records = generate_for_policy(cfg, name, batch_size=args.batch_size)
+        write_jsonl(out, records)
+        mean_len = sum(r["response_tokens"] for r in records) / len(records)
+        print(f"[{name}] wrote {len(records)} responses (mean {mean_len:.1f} tokens) -> {out}")
 
 
 if __name__ == "__main__":
