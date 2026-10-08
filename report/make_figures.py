@@ -268,7 +268,8 @@ def task3():
         for i, lt in enumerate(nc["measured_gradient_norms_on_cache"]):
             m = nc["measured_gradient_norms_on_cache"][lt]
             ax.bar(np.arange(3) + (i - 0.5) * w, [m[b]["share_of_total"] for b in bins], w, color=C[i], label=lt, edgecolor="white", linewidth=1)
-        ax.set_xticks(range(3), [f"{b} completions" for b in bins])
+        ax.set_xticks(range(3), bins)
+        ax.set_xlabel("completion length tercile (measured on the K-cache at the midpoint)")
         ax.set_ylabel("share of total |grad|")
         ax.legend()
         ax.grid(axis="x", visible=False)
@@ -381,8 +382,57 @@ def task5():
                      f"RLAIF {k['rlaif_seconds_per_group']:.2f} s ({k['rlaif_judge_calls_per_group']} judge generations).\n")
 
 
+def _gen(rel):
+    p = RES / rel
+    if not p.exists():
+        return None
+    return {r["prompt_id"]: r for r in (json.loads(x) for x in p.read_text(encoding="utf-8").splitlines() if x.strip())}
+
+
+def paired_rows(pairs, ref_label):
+    """Paired held-out comparison on identical prompts: mean difference and 95% CI (normal approx)."""
+    rows = []
+    for label, a, b in pairs:
+        if a is None or b is None:
+            continue
+        ids = sorted(set(a) & set(b))
+        out = [label, len(ids)]
+        for k in ("reward", "response_tokens"):
+            d = np.array([a[i][k] - b[i][k] for i in ids], dtype=float)
+            se = d.std(ddof=1) / np.sqrt(len(d)) if len(d) > 1 else float("nan")
+            out += [f"{np.mean([a[i][k] for i in ids]):.3f}" if k == "reward" else f"{np.mean([a[i][k] for i in ids]):.0f}",
+                    f"{d.mean():+.3f} ± {1.96 * se:.3f}" if k == "reward" else f"{d.mean():+.1f} ± {1.96 * se:.1f}"]
+        rows.append(out)
+    if rows:
+        table(["condition", "n prompts", "reward", f"Δreward vs {ref_label} (95% CI)", "tokens", f"Δtokens vs {ref_label} (95% CI)"], rows)
+
+
+def uncertainty():
+    """Held-out generation metrics are noisy (one sample per prompt); report paired deltas with CIs."""
+    print("Uncertainty")
+    LINES.append("## Held-out comparisons with uncertainty (paired on identical prompts; one sampled response per prompt)\n")
+    LINES.append("A CI that contains 0 means the difference is not distinguishable from sampling noise at this sample size.\n")
+    sft1 = _gen("task1_dpo/eval_sft_generations.jsonl")
+    LINES.append("**Task 1 (vs SFT, first 100 held-out DPO prompts)**\n")
+    paired_rows([(n, _gen(f"task1_dpo/eval_{n}_generations.jsonl"), sft1)
+                 for n in ["beta_0p03", "beta_0p1", "beta_0p3", "standard", "length_balanced"]], "SFT")
+    for task, names in [("task2_ppo", ["sft", "standard", "fork_eps0p05_kl0p1", "fork_eps0p2_kl0p1", "fork_eps0p5_kl0p1", "fork_eps0p2_kl0", "fork_eps0p2_kl0p2"]),
+                        ("task3_grpo", ["standard", "fork_grpo", "fork_dr_grpo"])]:
+        mid = _gen(f"{task}/eval/midpoint_generations.jsonl")
+        LINES.append(f"**{task} (vs supplied midpoint, first 64 held-out RL prompts, cap 768)**\n")
+        paired_rows([(n, _gen(f"{task}/eval/{n}_generations.jsonl"), mid) for n in names], "midpoint")
+        rows = []
+        for n in ["sft", "midpoint"] + names:
+            p = RES / task / "eval" / f"{n}.json"
+            if p.exists() and n not in [r[0] for r in rows]:
+                e = json.loads(p.read_text(encoding="utf-8"))
+                rows.append([n, f(e["reward"]["mean"]), f(e["reward"]["std"] / np.sqrt(e["n"])), f(e["kl"], 5), f(e["entropy"]),
+                             f(e["response_tokens"]["mean"], 0), f(e["truncation_rate"], 2)])
+        table(["condition", "reward", "reward SE", "KL", "entropy", "tokens", "trunc"], rows)
+
+
 def main():
-    for fn in (task1, task2, task3, task4, task5):
+    for fn in (task1, task2, task3, task4, task5, uncertainty):
         try:
             fn()
         except Exception as exc:  # keep going so one malformed result doesn't block the rest

@@ -149,3 +149,55 @@ S_reason: RLVR 0.000, RLAIF 0.000; S_outcome: RLVR 1.000, RLAIF 0.250.
 | transfer/rlaif | 92 | 8 | 5 | 0.562 | 0.625 | 2 | 0.500 |
 
 Cost per K=4 group on Tesla T4: RLVR 0.005 ms (4 verifier calls) vs RLAIF 2.48 s (6 judge generations).
+
+## Held-out comparisons with uncertainty (paired on identical prompts; one sampled response per prompt)
+
+A CI that contains 0 means the difference is not distinguishable from sampling noise at this sample size.
+
+**Task 1 (vs SFT, first 100 held-out DPO prompts)**
+
+| condition | n prompts | reward | Δreward vs SFT (95% CI) | tokens | Δtokens vs SFT (95% CI) |
+|---|---|---|---|---|---|
+| beta_0p03 | 100 | 0.974 | +0.040 ± 0.124 | 172 | +0.5 ± 2.6 |
+| beta_0p1 | 100 | 0.995 | +0.061 ± 0.115 | 171 | -1.1 ± 3.4 |
+| beta_0p3 | 100 | 1.045 | +0.111 ± 0.100 | 173 | +1.6 ± 4.4 |
+| standard | 100 | 1.034 | +0.100 ± 0.114 | 175 | +3.0 ± 5.3 |
+| length_balanced | 100 | 1.083 | +0.149 ± 0.130 | 171 | -0.4 ± 5.9 |
+
+**task2_ppo (vs supplied midpoint, first 64 held-out RL prompts, cap 768)**
+
+| condition | n prompts | reward | Δreward vs midpoint (95% CI) | tokens | Δtokens vs midpoint (95% CI) |
+|---|---|---|---|---|---|
+| sft | 64 | 1.436 | -0.170 ± 0.307 | 291 | -21.0 ± 38.9 |
+| standard | 64 | 1.419 | -0.187 ± 0.260 | 309 | -2.3 ± 35.9 |
+| fork_eps0p05_kl0p1 | 64 | 1.629 | +0.023 ± 0.292 | 311 | -0.2 ± 34.3 |
+| fork_eps0p2_kl0p1 | 64 | 1.629 | +0.023 ± 0.292 | 311 | -0.2 ± 34.3 |
+| fork_eps0p5_kl0p1 | 64 | 1.629 | +0.023 ± 0.292 | 311 | -0.2 ± 34.3 |
+| fork_eps0p2_kl0 | 64 | 1.635 | +0.029 ± 0.284 | 293 | -18.8 ± 32.4 |
+| fork_eps0p2_kl0p2 | 64 | 1.555 | -0.051 ± 0.212 | 293 | -19.1 ± 30.6 |
+
+| condition | reward | reward SE | KL | entropy | tokens | trunc |
+|---|---|---|---|---|---|---|
+| sft | 1.436 | 0.190 | 0.00000 | 0.997 | 291 | 0.08 |
+| midpoint | 1.606 | 0.203 | -0.00003 | 0.999 | 312 | 0.08 |
+| standard | 1.419 | 0.188 | 0.00002 | 0.966 | 309 | 0.09 |
+| fork_eps0p05_kl0p1 | 1.629 | 0.174 | -0.00008 | 0.994 | 311 | 0.06 |
+| fork_eps0p2_kl0p1 | 1.629 | 0.174 | -0.00008 | 0.994 | 311 | 0.06 |
+| fork_eps0p5_kl0p1 | 1.629 | 0.174 | -0.00008 | 0.994 | 311 | 0.06 |
+| fork_eps0p2_kl0 | 1.635 | 0.180 | -0.00002 | 1.012 | 293 | 0.09 |
+| fork_eps0p2_kl0p2 | 1.555 | 0.187 | -0.00002 | 1.004 | 293 | 0.06 |
+
+**task3_grpo (vs supplied midpoint, first 64 held-out RL prompts, cap 768)**
+
+| condition | n prompts | reward | Δreward vs midpoint (95% CI) | tokens | Δtokens vs midpoint (95% CI) |
+|---|---|---|---|---|---|
+| standard | 64 | 1.701 | +0.053 ± 0.173 | 303 | +0.5 ± 25.4 |
+| fork_grpo | 64 | 1.634 | -0.014 ± 0.214 | 320 | +18.5 ± 27.1 |
+| fork_dr_grpo | 64 | 1.596 | -0.052 ± 0.180 | 308 | +5.9 ± 23.7 |
+
+| condition | reward | reward SE | KL | entropy | tokens | trunc |
+|---|---|---|---|---|---|---|
+| midpoint | 1.648 | 0.182 | 0.00001 | 0.972 | 302 | 0.09 |
+| standard | 1.701 | 0.157 | 0.00009 | 0.978 | 303 | 0.06 |
+| fork_grpo | 1.634 | 0.191 | 0.00008 | 0.992 | 320 | 0.11 |
+| fork_dr_grpo | 1.596 | 0.186 | 0.00003 | 0.991 | 308 | 0.09 |
