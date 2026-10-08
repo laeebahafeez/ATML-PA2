@@ -50,6 +50,14 @@ Short β forks use 600 training pairs; standard and length-balanced use one full
 | 0.2 | 1.629 | -0.0001 | 0.994 | 311 | 0.00001 | 0.000 | 0.0003 | 1.429 |
 | 0.5 | 1.629 | -0.0001 | 0.994 | 311 | 0.00001 | 0.000 | 0.0003 | 1.429 |
 
+Fork budgets (same seeded prompt schedule; generated tokens summed over training rollouts):
+
+| run | updates | distinct prompts | generated tokens |
+|---|---|---|---|
+| fork_eps0p05_kl0p1 | 8 | 8 | 2028 |
+| fork_eps0p2_kl0p1 | 8 | 8 | 2028 |
+| fork_eps0p5_kl0p1 | 8 | 8 | 2028 |
+
 ## Task 2 - KL pressure (held-out, common protocol)
 
 | condition | held-out R | KL | entropy | len | trunc |
@@ -58,6 +66,14 @@ Short β forks use 600 training pairs; standard and length-balanced use one full
 | β_KL=0 | 1.635 | -0.0000 | 1.012 | 293 | 0.09 |
 | β_KL=0.1 | 1.629 | -0.0001 | 0.994 | 311 | 0.06 |
 | β_KL=0.2 | 1.555 | -0.0000 | 1.004 | 293 | 0.06 |
+
+Fork budgets (same seeded prompt schedule; generated tokens summed over training rollouts):
+
+| run | updates | distinct prompts | generated tokens |
+|---|---|---|---|
+| fork_eps0p2_kl0 | 8 | 8 | 2076 |
+| fork_eps0p2_kl0p1 | 8 | 8 | 2028 |
+| fork_eps0p2_kl0p2 | 8 | 8 | 2062 |
 
 ## Task 3 - standard GRPO continuation
 
@@ -90,6 +106,13 @@ Binning: terciles of per-prompt mean reward over the 8 cached completions (hard 
 |---|---|---|---|---|---|---|---|---|
 | grpo | 1.634 | 0.0001 | 320 | 0.494 | 0.000 | -0.231 | 0.18 | -0.455 |
 | dr_grpo | 1.596 | 0.0000 | 308 | 0.282 | 0.000 | 0.592 | 4.33 | 0.593 |
+
+Fork budgets (same seeded prompt schedule; generated tokens summed over training rollouts):
+
+| run | updates | distinct prompts | generated tokens |
+|---|---|---|---|
+| fork_grpo | 8 | 8 | 8543 |
+| fork_dr_grpo | 8 | 8 | 8506 |
 
 ## Task 4 - safety calibration (AI judge)
 

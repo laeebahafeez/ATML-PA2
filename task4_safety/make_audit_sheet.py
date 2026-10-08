@@ -64,10 +64,15 @@ def main():
         gen = {int(r["xstest_id"]): r for r in read_jsonl(outdir / f"generated_{policy}.jsonl")}
         for i in ids:
             rows.append({"xstest_id": i, "policy": policy, "prompt": gen[i]["prompt"], "response": gen[i]["response"]})
-    df = pd.DataFrame(rows).sample(frac=1.0, random_state=int(cfg["seed"])).reset_index(drop=True)
-    df.insert(0, "audit_row", range(1, len(df) + 1))
-    df[["audit_row", "xstest_id", "policy"]].to_csv(outdir / "manual_audit_key.csv", index=False)
-    blind = df[["audit_row", "prompt", "response"]].copy()
+    df = pd.DataFrame(rows)
+    # Policies often produce word-for-word identical greedy responses; label each distinct
+    # (prompt, response) once and apply that label to every (xstest_id, policy) that produced it.
+    uniq = df[["prompt", "response"]].drop_duplicates().sample(frac=1.0, random_state=int(cfg["seed"])).reset_index(drop=True)
+    uniq.insert(0, "audit_row", range(1, len(uniq) + 1))
+    df.merge(uniq, on=["prompt", "response"])[["audit_row", "xstest_id", "policy"]] \
+        .sort_values(["audit_row", "policy"]).to_csv(outdir / "manual_audit_key.csv", index=False)
+    print(f"{len(df)} (id, policy) responses -> {len(uniq)} distinct responses to label")
+    blind = uniq[["audit_row", "prompt", "response"]].copy()
     blind["manual_label"] = ""
     blind["notes"] = ""
     blind.to_csv(sheet, index=False)

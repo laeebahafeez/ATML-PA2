@@ -101,6 +101,19 @@ def trajectories(series: dict, keys, title, fname, ncols=4):
     save(fig, fname)
 
 
+def budget_table(task, runs, completions_per_update):
+    """Matched-budget check for short forks: updates, distinct prompts, and generated tokens."""
+    rows = []
+    for r in runs:
+        log = load(f"{task}/{r}/train_log.jsonl")
+        if log:
+            toks = sum(x["response_length"] * completions_per_update for x in log)
+            rows.append([r, len(log), len({p for x in log for p in x["prompt_ids"]}), f"{toks:.0f}"])
+    if rows:
+        LINES.append("Fork budgets (same seeded prompt schedule; generated tokens summed over training rollouts):\n")
+        table(["run", "updates", "distinct prompts", "generated tokens"], rows)
+
+
 # ------------------------------------------------------------------------------- Task 1
 def task1():
     print("Task 1")
@@ -197,6 +210,7 @@ def task2():
               [[x["clip_epsilon"], f(x["heldout"]["reward"]["mean"]), f(x["heldout"]["kl"], 4), f(x["heldout"]["entropy"]),
                 f(x["heldout"]["response_tokens"]["mean"], 0), f(x["stability"]["max_update_kl"], 5), f(x["stability"]["mean_clip_fraction"]),
                 f(x["stability"]["policy_loss_std"], 4), f(x["stability"]["max_grad_norm"], 3)] for x in forks])
+        budget_table("task2_ppo", [x["run"] for x in forks], 1)
         trajectories({f"ε={x['clip_epsilon']:g}": load(f"task2_ppo/{x['run']}/train_log.jsonl") for x in forks},
                      [("reward", "learned reward"), ("kl", "KL to reference"), ("clip_fraction", "clip fraction"), ("approx_kl_old_new", "update KL(old‖new)")],
                      "Task 2: clipping forks", "t2_clip_forks")
@@ -208,6 +222,7 @@ def task2():
         rows += [[f"β_KL={x['kl_beta']:g}", f(x["heldout"]["reward"]["mean"]), f(x["heldout"]["kl"], 4), f(x["heldout"]["entropy"]),
                   f(x["heldout"]["response_tokens"]["mean"], 0), f(x["heldout"]["truncation_rate"], 2)] for x in kl["forks"]]
         table(["condition", "held-out R", "KL", "entropy", "len", "trunc"], rows)
+        budget_table("task2_ppo", [x["run"] for x in kl["forks"]], 1)
         trajectories({f"β_KL={x['kl_beta']:g}": load(f"task2_ppo/{x['run']}/train_log.jsonl") for x in kl["forks"]},
                      [("reward", "learned reward"), ("kl", "KL to reference"), ("entropy", "entropy"), ("response_length", "response tokens")],
                      "Task 2: KL-pressure forks", "t2_kl_forks")
@@ -263,6 +278,7 @@ def task3():
                          f(g["long"]["gradient_mass_share"]), f(g["corr_length_vs_mass"]), f(m["long_over_short_mean_norm"], 2),
                          f(m["corr_tokens_vs_grad_norm"])])
         table(["loss", "held-out R", "KL", "len", "train mass short", "train mass long", "corr(len, mass)", "measured long/short |g|", "corr(len, |g|)"], rows)
+        budget_table("task3_grpo", [d["run"] for d in nc["forks"].values()], int(load("task3_grpo/standard/summary.json")["num_generations"]))
         fig, ax = plt.subplots(figsize=(3.2, 1.9))
         bins, w = ["short", "medium", "long"], 0.38
         for i, lt in enumerate(nc["measured_gradient_norms_on_cache"]):
