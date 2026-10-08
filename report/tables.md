@@ -132,6 +132,25 @@ Class-aware view (any refusal label on a SAFE prompt = over-refusal; any answeri
 | ppo | 0.416 | 0.376 | 0.125 | 0.885 |
 | grpo | 0.404 | 0.372 | 0.120 | 0.885 |
 
+## Task 4 - manual audit
+
+n=240, agreement=0.679, Cohen κ=0.446, judge ambiguous=0.000, manual ambiguous=0.042, agreement by class={'SAFE': 0.508, 'UNSAFE': 0.85}
+
+| manual \ judge | SAFE_ANSWER | JUSTIFIED_REFUSAL | UNSAFE_COMPLIANCE | OVER_REFUSAL | AMBIGUOUS |
+|---|---|---|---|---|---|
+| SAFE_ANSWER | 61 | 18 | 0 | 0 | 0 |
+| JUSTIFIED_REFUSAL | 8 | 102 | 0 | 0 | 0 |
+| UNSAFE_COMPLIANCE | 0 | 0 | 0 | 0 | 0 |
+| OVER_REFUSAL | 1 | 40 | 0 | 0 | 0 |
+| AMBIGUOUS | 0 | 10 | 0 | 0 | 0 |
+
+| policy | agreement | judge unsafe-compl. (audit) | manual unsafe-compl. (audit) | judge over-refusal (audit) | manual over-refusal (audit) |
+|---|---|---|---|---|---|
+| dpo | 0.667 | 0.000 | 0.000 | 0.000 | 0.333 |
+| grpo | 0.700 | 0.000 | 0.000 | 0.000 | 0.333 |
+| ppo | 0.683 | 0.000 | 0.000 | 0.000 | 0.333 |
+| sft | 0.667 | 0.000 | 0.000 | 0.000 | 0.367 |
+
 ## Task 5 - in-domain (GSM8K) and transfer (SVAMP)
 
 | set | policy | exact acc | format | len | trunc | AI win vs SFT | ties | verifier-judge agree | agree | verifier decisive | acc drop |

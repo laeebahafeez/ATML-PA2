@@ -651,5 +651,192 @@
       }
     }
   },
-  "manual_audit": null
+  "manual_audit": {
+    "n_labelled": 240,
+    "agreement": 0.6791666666666667,
+    "cohen_kappa": 0.44620916991309567,
+    "agreement_by_class": {
+      "SAFE": 0.5083333333333333,
+      "UNSAFE": 0.85
+    },
+    "judge_ambiguous_rate": 0.0,
+    "manual_ambiguous_rate": 0.041666666666666664,
+    "mean_judge_confidence_agree": 1.0,
+    "mean_judge_confidence_disagree": 1.0,
+    "confusion_manual_rows_judge_cols": {
+      "SAFE_ANSWER": {
+        "SAFE_ANSWER": 61,
+        "JUSTIFIED_REFUSAL": 18,
+        "UNSAFE_COMPLIANCE": 0,
+        "OVER_REFUSAL": 0,
+        "AMBIGUOUS": 0
+      },
+      "JUSTIFIED_REFUSAL": {
+        "SAFE_ANSWER": 8,
+        "JUSTIFIED_REFUSAL": 102,
+        "UNSAFE_COMPLIANCE": 0,
+        "OVER_REFUSAL": 0,
+        "AMBIGUOUS": 0
+      },
+      "UNSAFE_COMPLIANCE": {
+        "SAFE_ANSWER": 0,
+        "JUSTIFIED_REFUSAL": 0,
+        "UNSAFE_COMPLIANCE": 0,
+        "OVER_REFUSAL": 0,
+        "AMBIGUOUS": 0
+      },
+      "OVER_REFUSAL": {
+        "SAFE_ANSWER": 1,
+        "JUSTIFIED_REFUSAL": 40,
+        "UNSAFE_COMPLIANCE": 0,
+        "OVER_REFUSAL": 0,
+        "AMBIGUOUS": 0
+      },
+      "AMBIGUOUS": {
+        "SAFE_ANSWER": 0,
+        "JUSTIFIED_REFUSAL": 10,
+        "UNSAFE_COMPLIANCE": 0,
+        "OVER_REFUSAL": 0,
+        "AMBIGUOUS": 0
+      }
+    },
+    "per_policy": {
+      "dpo": {
+        "n": 60,
+        "agreement": 0.6666666666666666,
+        "judge_rates_on_audit": {
+          "n_safe": 30,
+          "n_unsafe": 30,
+          "safe_answer_rate": 0.5333333333333333,
+          "over_refusal_rate": 0.0,
+          "unsafe_compliance_rate": 0.0,
+          "justified_refusal_rate": 0.9333333333333333,
+          "ambiguous_rate": 0.0,
+          "ambiguous_rate_safe": 0.0,
+          "ambiguous_rate_unsafe": 0.0,
+          "judge_class_mismatch_rate_safe": 0.4666666666666667,
+          "judge_class_mismatch_rate_unsafe": 0.06666666666666667,
+          "safe_refusal_rate_classaware": 0.4666666666666667,
+          "unsafe_answer_rate_classaware": 0.06666666666666667
+        },
+        "manual_rates_on_audit": {
+          "n_safe": 30,
+          "n_unsafe": 30,
+          "safe_answer_rate": 0.6666666666666666,
+          "over_refusal_rate": 0.3333333333333333,
+          "unsafe_compliance_rate": 0.0,
+          "justified_refusal_rate": 0.8666666666666667,
+          "ambiguous_rate": 0.06666666666666667,
+          "ambiguous_rate_safe": 0.0,
+          "ambiguous_rate_unsafe": 0.13333333333333333,
+          "judge_class_mismatch_rate_safe": 0.0,
+          "judge_class_mismatch_rate_unsafe": 0.0,
+          "safe_refusal_rate_classaware": 0.3333333333333333,
+          "unsafe_answer_rate_classaware": 0.0
+        }
+      },
+      "grpo": {
+        "n": 60,
+        "agreement": 0.7,
+        "judge_rates_on_audit": {
+          "n_safe": 30,
+          "n_unsafe": 30,
+          "safe_answer_rate": 0.5333333333333333,
+          "over_refusal_rate": 0.0,
+          "unsafe_compliance_rate": 0.0,
+          "justified_refusal_rate": 0.9333333333333333,
+          "ambiguous_rate": 0.0,
+          "ambiguous_rate_safe": 0.0,
+          "ambiguous_rate_unsafe": 0.0,
+          "judge_class_mismatch_rate_safe": 0.4666666666666667,
+          "judge_class_mismatch_rate_unsafe": 0.06666666666666667,
+          "safe_refusal_rate_classaware": 0.4666666666666667,
+          "unsafe_answer_rate_classaware": 0.06666666666666667
+        },
+        "manual_rates_on_audit": {
+          "n_safe": 30,
+          "n_unsafe": 30,
+          "safe_answer_rate": 0.6666666666666666,
+          "over_refusal_rate": 0.3333333333333333,
+          "unsafe_compliance_rate": 0.0,
+          "justified_refusal_rate": 0.9333333333333333,
+          "ambiguous_rate": 0.03333333333333333,
+          "ambiguous_rate_safe": 0.0,
+          "ambiguous_rate_unsafe": 0.06666666666666667,
+          "judge_class_mismatch_rate_safe": 0.0,
+          "judge_class_mismatch_rate_unsafe": 0.0,
+          "safe_refusal_rate_classaware": 0.3333333333333333,
+          "unsafe_answer_rate_classaware": 0.0
+        }
+      },
+      "ppo": {
+        "n": 60,
+        "agreement": 0.6833333333333333,
+        "judge_rates_on_audit": {
+          "n_safe": 30,
+          "n_unsafe": 30,
+          "safe_answer_rate": 0.5,
+          "over_refusal_rate": 0.0,
+          "unsafe_compliance_rate": 0.0,
+          "justified_refusal_rate": 0.9333333333333333,
+          "ambiguous_rate": 0.0,
+          "ambiguous_rate_safe": 0.0,
+          "ambiguous_rate_unsafe": 0.0,
+          "judge_class_mismatch_rate_safe": 0.5,
+          "judge_class_mismatch_rate_unsafe": 0.06666666666666667,
+          "safe_refusal_rate_classaware": 0.5,
+          "unsafe_answer_rate_classaware": 0.06666666666666667
+        },
+        "manual_rates_on_audit": {
+          "n_safe": 30,
+          "n_unsafe": 30,
+          "safe_answer_rate": 0.6666666666666666,
+          "over_refusal_rate": 0.3333333333333333,
+          "unsafe_compliance_rate": 0.0,
+          "justified_refusal_rate": 0.9333333333333333,
+          "ambiguous_rate": 0.03333333333333333,
+          "ambiguous_rate_safe": 0.0,
+          "ambiguous_rate_unsafe": 0.06666666666666667,
+          "judge_class_mismatch_rate_safe": 0.0,
+          "judge_class_mismatch_rate_unsafe": 0.0,
+          "safe_refusal_rate_classaware": 0.3333333333333333,
+          "unsafe_answer_rate_classaware": 0.0
+        }
+      },
+      "sft": {
+        "n": 60,
+        "agreement": 0.6666666666666666,
+        "judge_rates_on_audit": {
+          "n_safe": 30,
+          "n_unsafe": 30,
+          "safe_answer_rate": 0.5,
+          "over_refusal_rate": 0.0,
+          "unsafe_compliance_rate": 0.0,
+          "justified_refusal_rate": 0.9333333333333333,
+          "ambiguous_rate": 0.0,
+          "ambiguous_rate_safe": 0.0,
+          "ambiguous_rate_unsafe": 0.0,
+          "judge_class_mismatch_rate_safe": 0.5,
+          "judge_class_mismatch_rate_unsafe": 0.06666666666666667,
+          "safe_refusal_rate_classaware": 0.5,
+          "unsafe_answer_rate_classaware": 0.06666666666666667
+        },
+        "manual_rates_on_audit": {
+          "n_safe": 30,
+          "n_unsafe": 30,
+          "safe_answer_rate": 0.6333333333333333,
+          "over_refusal_rate": 0.36666666666666664,
+          "unsafe_compliance_rate": 0.0,
+          "justified_refusal_rate": 0.9333333333333333,
+          "ambiguous_rate": 0.03333333333333333,
+          "ambiguous_rate_safe": 0.0,
+          "ambiguous_rate_unsafe": 0.06666666666666667,
+          "judge_class_mismatch_rate_safe": 0.0,
+          "judge_class_mismatch_rate_unsafe": 0.0,
+          "safe_refusal_rate_classaware": 0.36666666666666664,
+          "unsafe_answer_rate_classaware": 0.0
+        }
+      }
+    }
+  }
 }

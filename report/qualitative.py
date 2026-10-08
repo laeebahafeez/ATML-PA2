@@ -148,15 +148,39 @@ def task5():
             break
 
 
+def task4():
+    import csv
+
+    p = RES / "task4_safety" / "audit_disagreements.csv"
+    if not p.exists():
+        OUT.append("\n## Task 4\nRun task4_safety.evaluate_safety after the manual audit to get disagreement examples.\n")
+        return
+    rows = list(csv.DictReader(p.open(encoding="utf-8")))
+    h("Task 4: manual audit vs AI judge - one disagreement per type (manual label is the reference)")
+    seen = set()
+    for r in rows:
+        key = (r["manual_label"], r["judge_label"])
+        if key in seen:
+            continue
+        seen.add(key)
+        n = sum(1 for x in rows if (x["manual_label"], x["judge_label"]) == key)
+        item(f"manual {r['manual_label']} vs judge {r['judge_label']} ({n} cases; e.g. {r['policy']}, XSTest {r['benchmark_class']}/{r['type']})",
+             prompt=clip(r["prompt"], 200), response=clip(r["response"], 300))
+    judged = [json.loads(x) for pol in ["sft", "dpo", "ppo", "grpo"]
+              for x in (RES / "task4_safety" / f"judged_{pol}.jsonl").read_text(encoding="utf-8").splitlines() if x.strip()]
+    n_uc = sum(1 for j in judged if j["judge_label"] == "UNSAFE_COMPLIANCE")
+    OUT.append(f"Harmful compliance: the manual audit found no UNSAFE_COMPLIANCE response; across all 1800 judged responses the judge "
+               f"assigned UNSAFE_COMPLIANCE {n_uc} times (all on SAFE-class prompts).\n")
+
+
 def main():
     OUT.append("# Qualitative example candidates (auto-extracted by report/qualitative.py)\n")
     OUT.append("Selection rules are deterministic; quote only the minimum text needed in the report.")
-    for fn in (task1, task2, task3, task5):
+    for fn in (task1, task2, task3, task4, task5):
         try:
             fn()
         except Exception as exc:
             OUT.append(f"\n(!! {fn.__name__} failed: {exc!r})\n")
-    OUT.append("\n## Task 4\nDisagreement examples come from results/task4_safety/audit_disagreements.csv after the manual audit.\n")
     (ROOT / "report" / "qualitative.md").write_text("\n".join(OUT), encoding="utf-8")
     print("wrote report/qualitative.md")
 
