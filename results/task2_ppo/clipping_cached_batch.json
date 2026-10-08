@@ -1,0 +1,178 @@
+{
+  "n_rollouts": 32,
+  "n_tokens": 8814,
+  "skipped": [],
+  "used_cached_values": true,
+  "kl_beta_for_shaping": 0.1,
+  "advantage_abs_mean": 0.7782034277915955,
+  "per_epsilon": {
+    "0.05": [
+      {
+        "step": 0,
+        "clip_fraction": 0.15429997730882686,
+        "affected_fraction": 0.07612888586339914,
+        "clipped_surrogate": -0.011394552783357981,
+        "unclipped_surrogate": 0.00027992853453999504,
+        "approx_kl_old_new": 0.10751888650614809,
+        "ratio_max": 32.57938766479492,
+        "ratio_min": 2.2366484220270877e-09,
+        "grad_norm": 0.0459224134683609
+      },
+      {
+        "step": 1,
+        "clip_fraction": 0.15259813932380303,
+        "affected_fraction": 0.07590197413206262,
+        "clipped_surrogate": -0.011338306211792262,
+        "unclipped_surrogate": 0.0003580319481099412,
+        "approx_kl_old_new": 0.10751913665715189,
+        "ratio_max": 32.58505630493164,
+        "ratio_min": 2.2318713543967306e-09,
+        "grad_norm": 0.04541746899485588
+      },
+      {
+        "step": 2,
+        "clip_fraction": 0.1554345359655094,
+        "affected_fraction": 0.07828454731109598,
+        "clipped_surrogate": -0.011289323237793284,
+        "unclipped_surrogate": 0.0004095967553872112,
+        "approx_kl_old_new": 0.10744132998285769,
+        "ratio_max": 32.55567169189453,
+        "ratio_min": 2.2705624047603123e-09,
+        "grad_norm": 0.04551085829734802
+      },
+      {
+        "step": 3,
+        "clip_fraction": 0.15361924211481734,
+        "affected_fraction": 0.07658270932607215,
+        "clipped_surrogate": -0.011284794272114854,
+        "unclipped_surrogate": 0.0004087023949282278,
+        "approx_kl_old_new": 0.10741435561787029,
+        "ratio_max": 32.57899856567383,
+        "ratio_min": 2.276759447639165e-09,
+        "grad_norm": 0.04601385444402695
+      },
+      {
+        "step": 4,
+        "clip_fraction": 0.15259813932380303,
+        "affected_fraction": 0.07612888586339914,
+        "clipped_surrogate": -0.01127883113645117,
+        "unclipped_surrogate": 0.00040074397112632357,
+        "approx_kl_old_new": 0.10748079624768775,
+        "ratio_max": 32.56745910644531,
+        "ratio_min": 2.214866290373152e-09
+      }
+    ],
+    "0.2": [
+      {
+        "step": 0,
+        "clip_fraction": 0.04129793510324484,
+        "affected_fraction": 0.019741320626276378,
+        "clipped_surrogate": -0.00790506256446293,
+        "unclipped_surrogate": 0.00027992853453999504,
+        "approx_kl_old_new": 0.10751888650614809,
+        "ratio_max": 32.57938766479492,
+        "ratio_min": 2.2366484220270877e-09,
+        "grad_norm": 0.05010685324668884
+      },
+      {
+        "step": 1,
+        "clip_fraction": 0.041411390968913095,
+        "affected_fraction": 0.01996823235761289,
+        "clipped_surrogate": -0.007868460125735971,
+        "unclipped_surrogate": 0.0003210001584756988,
+        "approx_kl_old_new": 0.10751685097355078,
+        "ratio_max": 32.567481994628906,
+        "ratio_min": 2.2550121769882026e-09,
+        "grad_norm": 0.05013972893357277
+      },
+      {
+        "step": 2,
+        "clip_fraction": 0.04129793510324484,
+        "affected_fraction": 0.019854776491944632,
+        "clipped_surrogate": -0.007844894745735617,
+        "unclipped_surrogate": 0.00034987544402098045,
+        "approx_kl_old_new": 0.10739993483907842,
+        "ratio_max": 32.54365158081055,
+        "ratio_min": 2.2516768449776237e-09,
+        "grad_norm": 0.05015396326780319
+      },
+      {
+        "step": 3,
+        "clip_fraction": 0.04095756750624007,
+        "affected_fraction": 0.019741320626276378,
+        "clipped_surrogate": -0.007787747639551546,
+        "unclipped_surrogate": 0.00042169319817828894,
+        "approx_kl_old_new": 0.10753741839302144,
+        "ratio_max": 32.56146240234375,
+        "ratio_min": 2.2205342009584683e-09,
+        "grad_norm": 0.050095416605472565
+      },
+      {
+        "step": 4,
+        "clip_fraction": 0.04129793510324484,
+        "affected_fraction": 0.01996823235761289,
+        "clipped_surrogate": -0.007681909273183072,
+        "unclipped_surrogate": 0.000495352055552002,
+        "approx_kl_old_new": 0.10749818339957437,
+        "ratio_max": 32.57938766479492,
+        "ratio_min": 2.2660369136673353e-09
+      }
+    ],
+    "0.5": [
+      {
+        "step": 0,
+        "clip_fraction": 0.02110279101429544,
+        "affected_fraction": 0.010097572044474699,
+        "clipped_surrogate": -0.005373998032639782,
+        "unclipped_surrogate": 0.00027992853453999504,
+        "approx_kl_old_new": 0.10751888650614809,
+        "ratio_max": 32.57938766479492,
+        "ratio_min": 2.2366484220270877e-09,
+        "grad_norm": 0.051612090319395065
+      },
+      {
+        "step": 1,
+        "clip_fraction": 0.020762423417290673,
+        "affected_fraction": 0.009984116178806445,
+        "clipped_surrogate": -0.0053034696634161466,
+        "unclipped_surrogate": 0.00036369722284966647,
+        "approx_kl_old_new": 0.10741736786237602,
+        "ratio_max": 32.56144714355469,
+        "ratio_min": 2.26223240140655e-09,
+        "grad_norm": 0.05182020738720894
+      },
+      {
+        "step": 2,
+        "clip_fraction": 0.02064896755162242,
+        "affected_fraction": 0.009870660313138189,
+        "clipped_surrogate": -0.005261605380207388,
+        "unclipped_surrogate": 0.0003958952475600376,
+        "approx_kl_old_new": 0.10753078594488215,
+        "ratio_max": 32.56182098388672,
+        "ratio_min": 2.2404913480045252e-09,
+        "grad_norm": 0.05174173787236214
+      },
+      {
+        "step": 3,
+        "clip_fraction": 0.020762423417290673,
+        "affected_fraction": 0.009984116178806445,
+        "clipped_surrogate": -0.005173171056163589,
+        "unclipped_surrogate": 0.0004942352765808036,
+        "approx_kl_old_new": 0.10744380712049807,
+        "ratio_max": 32.56182861328125,
+        "ratio_min": 2.2544874855867647e-09,
+        "grad_norm": 0.05168334022164345
+      },
+      {
+        "step": 4,
+        "clip_fraction": 0.020762423417290673,
+        "affected_fraction": 0.009984116178806445,
+        "clipped_surrogate": -0.005248588886232855,
+        "unclipped_surrogate": 0.0004100080233786635,
+        "approx_kl_old_new": 0.10744174945662362,
+        "ratio_max": 32.58546829223633,
+        "ratio_min": 2.2573403146708415e-09
+      }
+    ]
+  }
+}

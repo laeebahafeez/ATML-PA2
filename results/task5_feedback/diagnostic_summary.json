@@ -1,0 +1,106 @@
+{
+  "by_perturbation": {
+    "corrupt_reasoning_correct_final": {
+      "axis": "reasoning",
+      "rlvr": {
+        "n": 20,
+        "better_rate": 0.0,
+        "tie_rate": 1.0,
+        "wrong_rate": 0.0
+      },
+      "rlaif": {
+        "n": 20,
+        "better_rate": 0.0,
+        "tie_rate": 1.0,
+        "wrong_rate": 0.0
+      },
+      "rlaif_order_consistency": 1.0
+    },
+    "good_reasoning_wrong_final": {
+      "axis": "outcome",
+      "rlvr": {
+        "n": 20,
+        "better_rate": 1.0,
+        "tie_rate": 0.0,
+        "wrong_rate": 0.0
+      },
+      "rlaif": {
+        "n": 20,
+        "better_rate": 0.15,
+        "tie_rate": 0.85,
+        "wrong_rate": 0.0
+      },
+      "rlaif_order_consistency": 0.85
+    },
+    "gold_distractor_wrong_final": {
+      "axis": "outcome",
+      "rlvr": {
+        "n": 20,
+        "better_rate": 1.0,
+        "tie_rate": 0.0,
+        "wrong_rate": 0.0
+      },
+      "rlaif": {
+        "n": 20,
+        "better_rate": 0.35,
+        "tie_rate": 0.6,
+        "wrong_rate": 0.05
+      },
+      "rlaif_order_consistency": 0.7
+    },
+    "persuasive_filler_correct": {
+      "axis": "style",
+      "rlvr": {
+        "n": 20,
+        "better_rate": 0.0,
+        "tie_rate": 1.0,
+        "wrong_rate": 0.0
+      },
+      "rlaif": {
+        "n": 20,
+        "better_rate": 0.0,
+        "tie_rate": 0.75,
+        "wrong_rate": 0.25
+      },
+      "rlaif_order_consistency": 1.0
+    }
+  },
+  "by_variant": {
+    "clean_correct": {
+      "mean_exact_reward": 1.0,
+      "mean_rlaif_group_reward": 0.49375
+    },
+    "corrupt_reasoning_correct_final": {
+      "mean_exact_reward": 1.0,
+      "mean_rlaif_group_reward": 0.5
+    },
+    "good_reasoning_wrong_final": {
+      "mean_exact_reward": 0.0,
+      "mean_rlaif_group_reward": 0.475
+    },
+    "persuasive_filler_correct": {
+      "mean_exact_reward": 1.0,
+      "mean_rlaif_group_reward": 0.5875
+    },
+    "gold_distractor_wrong_final": {
+      "mean_exact_reward": 0.0,
+      "mean_rlaif_group_reward": 0.44375
+    }
+  },
+  "judge": {
+    "order_consistency_all": 0.8875,
+    "n_queries": 360
+  },
+  "S_reason_rlvr": 0.0,
+  "S_outcome_rlvr": 1.0,
+  "S_reason_rlvr_tie_rate": 1.0,
+  "S_outcome_rlvr_tie_rate": 0.0,
+  "S_reason_rlvr_wrong_rate": 0.0,
+  "S_outcome_rlvr_wrong_rate": 0.0,
+  "S_reason_rlaif": 0.0,
+  "S_outcome_rlaif": 0.25,
+  "S_reason_rlaif_tie_rate": 1.0,
+  "S_outcome_rlaif_tie_rate": 0.725,
+  "S_reason_rlaif_wrong_rate": 0.0,
+  "S_outcome_rlaif_wrong_rate": 0.025
+}

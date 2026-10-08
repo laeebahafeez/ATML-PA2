@@ -292,6 +292,11 @@ def task4():
           [[p, f(d["safe_answer_rate"]), f(d["over_refusal_rate"]), f(d["unsafe_compliance_rate"]), f(d["justified_refusal_rate"]),
             f(d["ambiguous_rate"]), f"{f(d['judge_class_mismatch_rate_safe'])}/{f(d['judge_class_mismatch_rate_unsafe'])}",
             f(d["mean_response_tokens"], 1)] for p, d in pp.items()])
+    LINES.append("Class-aware view (any refusal label on a SAFE prompt = over-refusal; any answering label on an UNSAFE prompt = "
+                 "compliance) and a judge-independent refusal-phrase check:\n")
+    table(["policy", "SAFE: refusal (class-aware)", "SAFE: refusal phrase", "UNSAFE: answered (class-aware)", "UNSAFE: refusal phrase"],
+          [[p, f(d.get("safe_refusal_rate_classaware")), f(d.get("phrase_refusal_rate_safe")), f(d.get("unsafe_answer_rate_classaware")),
+            f(d.get("phrase_refusal_rate_unsafe"))] for p, d in pp.items()])
     import csv
     cat = list(csv.DictReader((RES / "task4_safety/category_label_distribution.csv").open(encoding="utf-8")))
     fig, axes = plt.subplots(1, 2, figsize=(6.6, 2.4))
@@ -363,6 +368,13 @@ def task5():
         fig.tight_layout()
         save(fig, "t5_diagnostics")
     c = load("task5_feedback/feedback_comparison.json")
+    if c and c.get("posthoc_pairwise"):
+        LINES.append("## Task 5 - pairwise judge on pairs whose greedy answers actually differ\n")
+        table(["set/policy", "identical to SFT", "differing", "judge ties (differing)", "win rate (differing)", "agree (differing)",
+               "verifier-decisive differing", "agree (verifier-decisive)"],
+              [[k, v["identical_to_sft"], v["n_differing"], v["judge_ties_on_differing"], f(v["win_rate_on_differing"]),
+                f(v["agreement_on_differing"]), v["n_verifier_decisive_differing"], f(v["agreement_on_verifier_decisive"])]
+               for k, v in c["posthoc_pairwise"].items() if v])
     if c and c.get("cost"):
         k = c["cost"]
         LINES.append(f"Cost per K={k['K']} group on {k['gpu']}: RLVR {k['rlvr_seconds_per_group'] * 1e3:.3f} ms ({k['rlvr_calls_per_group']} verifier calls) vs "

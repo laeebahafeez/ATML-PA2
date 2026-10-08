@@ -57,6 +57,30 @@ def benchmark_costs(cfg, n=12):
     }
 
 
+def posthoc_pairwise(res, ds, policy):
+    """From saved files: how many greedy answers are identical to SFT, and verifier-judge agreement
+    restricted to pairs whose texts actually differ (identical pairs are trivially tied)."""
+    pol = res / f"{ds}_{policy}_responses.jsonl"
+    sft = res / f"{ds}_sft_responses.jsonl"
+    jud = res / f"{ds}_{policy}_vs_sft_judge.jsonl"
+    if not (pol.exists() and sft.exists() and jud.exists()):
+        return None
+    P, S, J = read_jsonl(pol), read_jsonl(sft), read_jsonl(jud)
+    same = [p["response"] == s["response"] for p, s in zip(P, S)]
+    diff = [j for j, sm in zip(J, same) if not sm]
+    dec = [j for j in diff if j["verifier_pref"] != "TIE"]
+    return {
+        "n": len(P),
+        "identical_to_sft": int(sum(same)),
+        "n_differing": len(diff),
+        "judge_ties_on_differing": int(sum(j["judge_pref"] == "TIE" for j in diff)),
+        "agreement_on_differing": (sum(j["judge_pref"] == j["verifier_pref"] for j in diff) / len(diff)) if diff else float("nan"),
+        "n_verifier_decisive_differing": len(dec),
+        "agreement_on_verifier_decisive": (sum(j["judge_pref"] == j["verifier_pref"] for j in dec) / len(dec)) if dec else float("nan"),
+        "win_rate_on_differing": (sum({"A": 1, "B": 0, "TIE": 0.5}[j["judge_pref"]] for j in diff) / len(diff)) if diff else float("nan"),
+    }
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default="configs/feedback.yaml")
@@ -71,10 +95,14 @@ def main():
         out[ds] = load_json(p) if p.exists() else None
         if out[ds] is None:
             print(f"(missing {p}; run task5_feedback.evaluate_math --dataset {ds})")
+    out["posthoc_pairwise"] = {f"{ds}/{pol}": posthoc_pairwise(res, ds, pol) for ds in ["gsm", "transfer"] for pol in ["rlvr", "rlaif"]}
     p = res / "diagnostic_summary.json"
     out["diagnostics"] = load_json(p) if p.exists() else None
+    prev = res / "feedback_comparison.json"
     if not args.skip_benchmark:
         out["cost"] = benchmark_costs(cfg)
+    elif prev.exists() and "cost" in load_json(prev):
+        out["cost"] = load_json(prev)["cost"]  # keep the GPU measurement from the full run
     save_json(res / "feedback_comparison.json", out)
 
     rows = []

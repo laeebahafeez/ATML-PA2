@@ -1,0 +1,14 @@
+{
+  "run_name": "fork_eps0p2_kl0p2",
+  "updates": 8,
+  "clip_epsilon": 0.2,
+  "kl_beta": 0.2,
+  "ppo_epochs": 2,
+  "prompts_per_update": 1,
+  "max_response_length": 512,
+  "seed": 6304,
+  "wall_clock_s": 126.59687914200003,
+  "peak_vram_gib": 6.267531871795654,
+  "gpu": "Tesla T4",
+  "adapter": "outputs/task2_ppo/fork_eps0p2_kl0p2"
+}

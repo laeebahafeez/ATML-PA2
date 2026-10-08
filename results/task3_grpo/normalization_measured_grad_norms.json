@@ -1,0 +1,770 @@
+[
+  {
+    "prompt": "124",
+    "tokens": 411,
+    "advantage": -1.3354653120040894,
+    "truncated": false,
+    "grad_norm_grpo": 0.3943876326084137,
+    "grad_norm_dr_grpo": 0.3165885097696446
+  },
+  {
+    "prompt": "124",
+    "tokens": 368,
+    "advantage": 1.424074411392212,
+    "truncated": false,
+    "grad_norm_grpo": 0.42679813504219055,
+    "grad_norm_dr_grpo": 0.30676115956157446
+  },
+  {
+    "prompt": "124",
+    "tokens": 271,
+    "advantage": 0.2594980001449585,
+    "truncated": false,
+    "grad_norm_grpo": 0.09075453877449036,
+    "grad_norm_dr_grpo": 0.048036093765404075
+  },
+  {
+    "prompt": "124",
+    "tokens": 255,
+    "advantage": -0.34810706973075867,
+    "truncated": false,
+    "grad_norm_grpo": 0.1159844696521759,
+    "grad_norm_dr_grpo": 0.057765702658798546
+  },
+  {
+    "prompt": "671",
+    "tokens": 578,
+    "advantage": -0.07932090759277344,
+    "truncated": false,
+    "grad_norm_grpo": 0.04000728204846382,
+    "grad_norm_dr_grpo": 0.04516447075002361
+  },
+  {
+    "prompt": "671",
+    "tokens": 713,
+    "advantage": -0.6859951019287109,
+    "truncated": false,
+    "grad_norm_grpo": 0.3413519561290741,
+    "grad_norm_dr_grpo": 0.47535926703130826
+  },
+  {
+    "prompt": "671",
+    "tokens": 767,
+    "advantage": -0.8882198333740234,
+    "truncated": true,
+    "grad_norm_grpo": 0.3754873275756836,
+    "grad_norm_dr_grpo": 0.5624976176768541
+  },
+  {
+    "prompt": "671",
+    "tokens": 767,
+    "advantage": 1.6535358428955078,
+    "truncated": true,
+    "grad_norm_grpo": 0.6758212447166443,
+    "grad_norm_dr_grpo": 1.0124119037063792
+  },
+  {
+    "prompt": "510",
+    "tokens": 140,
+    "advantage": -1.5953649282455444,
+    "truncated": false,
+    "grad_norm_grpo": 0.8068377375602722,
+    "grad_norm_dr_grpo": 0.22061969386413693
+  },
+  {
+    "prompt": "510",
+    "tokens": 306,
+    "advantage": 0.524446964263916,
+    "truncated": false,
+    "grad_norm_grpo": 0.18217100203037262,
+    "grad_norm_dr_grpo": 0.10887563793221489
+  },
+  {
+    "prompt": "510",
+    "tokens": 370,
+    "advantage": -0.01514151319861412,
+    "truncated": false,
+    "grad_norm_grpo": 0.004859502427279949,
+    "grad_norm_dr_grpo": 0.0035117498009640258
+  },
+  {
+    "prompt": "510",
+    "tokens": 310,
+    "advantage": 1.0860594511032104,
+    "truncated": false,
+    "grad_norm_grpo": 0.36107805371284485,
+    "grad_norm_dr_grpo": 0.21862147783394903
+  },
+  {
+    "prompt": "981",
+    "tokens": 15,
+    "advantage": 0.46033400297164917,
+    "truncated": false,
+    "grad_norm_grpo": 1.0116114616394043,
+    "grad_norm_dr_grpo": 0.029637054540216923
+  },
+  {
+    "prompt": "981",
+    "tokens": 13,
+    "advantage": -1.7157903909683228,
+    "truncated": false,
+    "grad_norm_grpo": 5.192604064941406,
+    "grad_norm_dr_grpo": 0.1318434625864029
+  },
+  {
+    "prompt": "981",
+    "tokens": 14,
+    "advantage": 0.7951223254203796,
+    "truncated": false,
+    "grad_norm_grpo": 1.8266503810882568,
+    "grad_norm_dr_grpo": 0.04994747135788202
+  },
+  {
+    "prompt": "981",
+    "tokens": 15,
+    "advantage": 0.46033400297164917,
+    "truncated": false,
+    "grad_norm_grpo": 1.0116114616394043,
+    "grad_norm_dr_grpo": 0.029637054540216923
+  },
+  {
+    "prompt": "175",
+    "tokens": 768,
+    "advantage": 0.09976580739021301,
+    "truncated": true,
+    "grad_norm_grpo": 0.019208958372473717,
+    "grad_norm_dr_grpo": 0.028813437558710575
+  },
+  {
+    "prompt": "175",
+    "tokens": 768,
+    "advantage": -1.4643477201461792,
+    "truncated": true,
+    "grad_norm_grpo": 0.2968437075614929,
+    "grad_norm_dr_grpo": 0.4452655613422394
+  },
+  {
+    "prompt": "175",
+    "tokens": 768,
+    "advantage": 1.358555793762207,
+    "truncated": true,
+    "grad_norm_grpo": 0.27212268114089966,
+    "grad_norm_dr_grpo": 0.4081840217113495
+  },
+  {
+    "prompt": "175",
+    "tokens": 767,
+    "advantage": 0.006026122719049454,
+    "truncated": true,
+    "grad_norm_grpo": 0.002098578494042158,
+    "grad_norm_dr_grpo": 0.003143768954942061
+  },
+  {
+    "prompt": "185",
+    "tokens": 96,
+    "advantage": -0.9900476336479187,
+    "truncated": false,
+    "grad_norm_grpo": 0.6961442232131958,
+    "grad_norm_dr_grpo": 0.1305270418524742
+  },
+  {
+    "prompt": "185",
+    "tokens": 768,
+    "advantage": -0.9984557032585144,
+    "truncated": true,
+    "grad_norm_grpo": 0.20317110419273376,
+    "grad_norm_dr_grpo": 0.30475665628910065
+  },
+  {
+    "prompt": "185",
+    "tokens": 768,
+    "advantage": 0.8429068326950073,
+    "truncated": true,
+    "grad_norm_grpo": 0.1642724722623825,
+    "grad_norm_dr_grpo": 0.24640870839357376
+  },
+  {
+    "prompt": "185",
+    "tokens": 768,
+    "advantage": 1.1455965042114258,
+    "truncated": true,
+    "grad_norm_grpo": 0.2408965826034546,
+    "grad_norm_dr_grpo": 0.3613448739051819
+  },
+  {
+    "prompt": "953",
+    "tokens": 70,
+    "advantage": -1.6134483814239502,
+    "truncated": false,
+    "grad_norm_grpo": 1.7501343488693237,
+    "grad_norm_dr_grpo": 0.23927618050947785
+  },
+  {
+    "prompt": "953",
+    "tokens": 101,
+    "advantage": 0.6159287691116333,
+    "truncated": false,
+    "grad_norm_grpo": 0.44390013813972473,
+    "grad_norm_dr_grpo": 0.08756623818771914
+  },
+  {
+    "prompt": "953",
+    "tokens": 206,
+    "advantage": 1.0086032152175903,
+    "truncated": false,
+    "grad_norm_grpo": 0.5413591265678406,
+    "grad_norm_dr_grpo": 0.2178124610800296
+  },
+  {
+    "prompt": "953",
+    "tokens": 47,
+    "advantage": -0.011083551682531834,
+    "truncated": false,
+    "grad_norm_grpo": 0.013426803052425385,
+    "grad_norm_dr_grpo": 0.0012325385614531115
+  },
+  {
+    "prompt": "873",
+    "tokens": 768,
+    "advantage": 0.6935884952545166,
+    "truncated": true,
+    "grad_norm_grpo": 0.22222773730754852,
+    "grad_norm_dr_grpo": 0.3333416059613228
+  },
+  {
+    "prompt": "873",
+    "tokens": 768,
+    "advantage": 1.2484592199325562,
+    "truncated": true,
+    "grad_norm_grpo": 0.33935031294822693,
+    "grad_norm_dr_grpo": 0.5090254694223404
+  },
+  {
+    "prompt": "873",
+    "tokens": 668,
+    "advantage": -0.7780253291130066,
+    "truncated": false,
+    "grad_norm_grpo": 0.21177586913108826,
+    "grad_norm_dr_grpo": 0.2763013292569667
+  },
+  {
+    "prompt": "873",
+    "tokens": 768,
+    "advantage": -1.164022445678711,
+    "truncated": true,
+    "grad_norm_grpo": 0.31653574109077454,
+    "grad_norm_dr_grpo": 0.4748036116361618
+  },
+  {
+    "prompt": "796",
+    "tokens": 647,
+    "advantage": 0.6940789222717285,
+    "truncated": false,
+    "grad_norm_grpo": 0.1574266254901886,
+    "grad_norm_dr_grpo": 0.19893559900810942
+  },
+  {
+    "prompt": "796",
+    "tokens": 607,
+    "advantage": -0.12006307393312454,
+    "truncated": false,
+    "grad_norm_grpo": 0.025845978409051895,
+    "grad_norm_dr_grpo": 0.030641618934168946
+  },
+  {
+    "prompt": "796",
+    "tokens": 768,
+    "advantage": -1.5791152715682983,
+    "truncated": true,
+    "grad_norm_grpo": 0.3504067063331604,
+    "grad_norm_dr_grpo": 0.5256100594997406
+  },
+  {
+    "prompt": "796",
+    "tokens": 602,
+    "advantage": 1.0050994157791138,
+    "truncated": false,
+    "grad_norm_grpo": 0.25212591886520386,
+    "grad_norm_dr_grpo": 0.296444928040728
+  },
+  {
+    "prompt": "263",
+    "tokens": 414,
+    "advantage": 0.952339231967926,
+    "truncated": false,
+    "grad_norm_grpo": 0.23238444328308105,
+    "grad_norm_dr_grpo": 0.18790460843592882
+  },
+  {
+    "prompt": "263",
+    "tokens": 406,
+    "advantage": -0.886153519153595,
+    "truncated": false,
+    "grad_norm_grpo": 0.2311905175447464,
+    "grad_norm_dr_grpo": 0.18332685570931062
+  },
+  {
+    "prompt": "263",
+    "tokens": 511,
+    "advantage": -1.1067726612091064,
+    "truncated": false,
+    "grad_norm_grpo": 0.252091646194458,
+    "grad_norm_dr_grpo": 0.25159927969798446
+  },
+  {
+    "prompt": "263",
+    "tokens": 579,
+    "advantage": 1.0405868291854858,
+    "truncated": false,
+    "grad_norm_grpo": 0.20347969233989716,
+    "grad_norm_dr_grpo": 0.23010691770468839
+  },
+  {
+    "prompt": "507",
+    "tokens": 10,
+    "advantage": -1.3620537519454956,
+    "truncated": false,
+    "grad_norm_grpo": 2.849773406982422,
+    "grad_norm_dr_grpo": 0.05565963685512543
+  },
+  {
+    "prompt": "507",
+    "tokens": 15,
+    "advantage": 1.1144076585769653,
+    "truncated": false,
+    "grad_norm_grpo": 2.5329749584198,
+    "grad_norm_dr_grpo": 0.07420825073495507
+  },
+  {
+    "prompt": "507",
+    "tokens": 13,
+    "advantage": -0.5365666151046753,
+    "truncated": false,
+    "grad_norm_grpo": 1.3831995725631714,
+    "grad_norm_dr_grpo": 0.035120301647111773
+  },
+  {
+    "prompt": "507",
+    "tokens": 12,
+    "advantage": 0.7842127680778503,
+    "truncated": false,
+    "grad_norm_grpo": 0.9783512949943542,
+    "grad_norm_dr_grpo": 0.022930108476430178
+  },
+  {
+    "prompt": "961",
+    "tokens": 354,
+    "advantage": 0.6455398201942444,
+    "truncated": false,
+    "grad_norm_grpo": 0.2749704420566559,
+    "grad_norm_dr_grpo": 0.19011628220323473
+  },
+  {
+    "prompt": "961",
+    "tokens": 486,
+    "advantage": 0.46386095881462097,
+    "truncated": false,
+    "grad_norm_grpo": 0.18547850847244263,
+    "grad_norm_dr_grpo": 0.1760596779640764
+  },
+  {
+    "prompt": "961",
+    "tokens": 424,
+    "advantage": 0.6184812784194946,
+    "truncated": false,
+    "grad_norm_grpo": 0.25165197253227234,
+    "grad_norm_dr_grpo": 0.20839928975328803
+  },
+  {
+    "prompt": "961",
+    "tokens": 190,
+    "advantage": -1.7278820276260376,
+    "truncated": false,
+    "grad_norm_grpo": 1.0246833562850952,
+    "grad_norm_dr_grpo": 0.38025358924642205
+  },
+  {
+    "prompt": "280",
+    "tokens": 2,
+    "advantage": 0.0,
+    "truncated": false,
+    "grad_norm_grpo": 0.0,
+    "grad_norm_dr_grpo": 0.0
+  },
+  {
+    "prompt": "280",
+    "tokens": 2,
+    "advantage": 0.0,
+    "truncated": false,
+    "grad_norm_grpo": 0.0,
+    "grad_norm_dr_grpo": 0.0
+  },
+  {
+    "prompt": "280",
+    "tokens": 2,
+    "advantage": 0.0,
+    "truncated": false,
+    "grad_norm_grpo": 0.0,
+    "grad_norm_dr_grpo": 0.0
+  },
+  {
+    "prompt": "280",
+    "tokens": 2,
+    "advantage": 0.0,
+    "truncated": false,
+    "grad_norm_grpo": 0.0,
+    "grad_norm_dr_grpo": 0.0
+  },
+  {
+    "prompt": "936",
+    "tokens": 140,
+    "advantage": -0.45661622285842896,
+    "truncated": false,
+    "grad_norm_grpo": 0.24735449254512787,
+    "grad_norm_dr_grpo": 0.0676359940553084
+  },
+  {
+    "prompt": "936",
+    "tokens": 75,
+    "advantage": -1.2385624647140503,
+    "truncated": false,
+    "grad_norm_grpo": 0.7946478724479675,
+    "grad_norm_dr_grpo": 0.11640349694062024
+  },
+  {
+    "prompt": "936",
+    "tokens": 181,
+    "advantage": 1.4881504774093628,
+    "truncated": false,
+    "grad_norm_grpo": 0.7174457907676697,
+    "grad_norm_dr_grpo": 0.253628297126852
+  },
+  {
+    "prompt": "936",
+    "tokens": 403,
+    "advantage": 0.20702821016311646,
+    "truncated": false,
+    "grad_norm_grpo": 0.05607824772596359,
+    "grad_norm_dr_grpo": 0.044139714518678375
+  },
+  {
+    "prompt": "254",
+    "tokens": 768,
+    "advantage": 1.1264492273330688,
+    "truncated": true,
+    "grad_norm_grpo": 0.23830634355545044,
+    "grad_norm_dr_grpo": 0.35745951533317566
+  },
+  {
+    "prompt": "254",
+    "tokens": 768,
+    "advantage": -1.6117051839828491,
+    "truncated": true,
+    "grad_norm_grpo": 0.2628142833709717,
+    "grad_norm_dr_grpo": 0.3942214250564575
+  },
+  {
+    "prompt": "254",
+    "tokens": 768,
+    "advantage": 0.15382295846939087,
+    "truncated": true,
+    "grad_norm_grpo": 0.025357713922858238,
+    "grad_norm_dr_grpo": 0.03803657088428736
+  },
+  {
+    "prompt": "254",
+    "tokens": 768,
+    "advantage": 0.3314329981803894,
+    "truncated": true,
+    "grad_norm_grpo": 0.05073409155011177,
+    "grad_norm_dr_grpo": 0.07610113732516766
+  },
+  {
+    "prompt": "463",
+    "tokens": 461,
+    "advantage": 1.6312410831451416,
+    "truncated": false,
+    "grad_norm_grpo": 0.48831069469451904,
+    "grad_norm_dr_grpo": 0.4396703715901822
+  },
+  {
+    "prompt": "463",
+    "tokens": 332,
+    "advantage": -0.1087494045495987,
+    "truncated": false,
+    "grad_norm_grpo": 0.032257113605737686,
+    "grad_norm_dr_grpo": 0.02091672210372053
+  },
+  {
+    "prompt": "463",
+    "tokens": 469,
+    "advantage": -1.0512442588806152,
+    "truncated": false,
+    "grad_norm_grpo": 0.27379274368286133,
+    "grad_norm_dr_grpo": 0.250798431225121
+  },
+  {
+    "prompt": "463",
+    "tokens": 400,
+    "advantage": -0.47124743461608887,
+    "truncated": false,
+    "grad_norm_grpo": 0.1381809413433075,
+    "grad_norm_dr_grpo": 0.10795386042445898
+  },
+  {
+    "prompt": "436",
+    "tokens": 695,
+    "advantage": 0.7178727388381958,
+    "truncated": false,
+    "grad_norm_grpo": 0.1178458109498024,
+    "grad_norm_dr_grpo": 0.1599664816603763
+  },
+  {
+    "prompt": "436",
+    "tokens": 598,
+    "advantage": 0.1872711479663849,
+    "truncated": false,
+    "grad_norm_grpo": 0.039525553584098816,
+    "grad_norm_dr_grpo": 0.046164611412677914
+  },
+  {
+    "prompt": "436",
+    "tokens": 576,
+    "advantage": -1.6854404211044312,
+    "truncated": false,
+    "grad_norm_grpo": 0.4128856062889099,
+    "grad_norm_dr_grpo": 0.46449630707502365
+  },
+  {
+    "prompt": "436",
+    "tokens": 766,
+    "advantage": 0.7802964448928833,
+    "truncated": false,
+    "grad_norm_grpo": 0.14846085011959076,
+    "grad_norm_dr_grpo": 0.2221113499836065
+  },
+  {
+    "prompt": "942",
+    "tokens": 338,
+    "advantage": 1.378193974494934,
+    "truncated": false,
+    "grad_norm_grpo": 0.4284595251083374,
+    "grad_norm_dr_grpo": 0.28285023337230086
+  },
+  {
+    "prompt": "942",
+    "tokens": 329,
+    "advantage": -0.03361449018120766,
+    "truncated": false,
+    "grad_norm_grpo": 0.009735843166708946,
+    "grad_norm_dr_grpo": 0.006256039847357897
+  },
+  {
+    "prompt": "942",
+    "tokens": 319,
+    "advantage": 0.10084346681833267,
+    "truncated": false,
+    "grad_norm_grpo": 0.028033161535859108,
+    "grad_norm_dr_grpo": 0.017465973691287218
+  },
+  {
+    "prompt": "942",
+    "tokens": 287,
+    "advantage": -1.4454230070114136,
+    "truncated": false,
+    "grad_norm_grpo": 0.49313366413116455,
+    "grad_norm_dr_grpo": 0.2764245343860239
+  },
+  {
+    "prompt": "184",
+    "tokens": 617,
+    "advantage": -1.2769887447357178,
+    "truncated": false,
+    "grad_norm_grpo": 0.24750502407550812,
+    "grad_norm_dr_grpo": 0.2982628903409932
+  },
+  {
+    "prompt": "184",
+    "tokens": 569,
+    "advantage": 0.9264428019523621,
+    "truncated": false,
+    "grad_norm_grpo": 0.1853182166814804,
+    "grad_norm_dr_grpo": 0.20594934627297334
+  },
+  {
+    "prompt": "184",
+    "tokens": 758,
+    "advantage": 1.0265988111495972,
+    "truncated": false,
+    "grad_norm_grpo": 0.21025563776493073,
+    "grad_norm_dr_grpo": 0.3112769012222998
+  },
+  {
+    "prompt": "184",
+    "tokens": 446,
+    "advantage": -0.6760528683662415,
+    "truncated": false,
+    "grad_norm_grpo": 0.15340325236320496,
+    "grad_norm_dr_grpo": 0.13362861436326057
+  },
+  {
+    "prompt": "922",
+    "tokens": 176,
+    "advantage": 1.7075141668319702,
+    "truncated": false,
+    "grad_norm_grpo": 0.734572172164917,
+    "grad_norm_dr_grpo": 0.2525091841816902
+  },
+  {
+    "prompt": "922",
+    "tokens": 88,
+    "advantage": -0.31045711040496826,
+    "truncated": false,
+    "grad_norm_grpo": 0.18976010382175446,
+    "grad_norm_dr_grpo": 0.03261501784436405
+  },
+  {
+    "prompt": "922",
+    "tokens": 51,
+    "advantage": -0.7761428356170654,
+    "truncated": false,
+    "grad_norm_grpo": 0.6070009469985962,
+    "grad_norm_dr_grpo": 0.06046298495493829
+  },
+  {
+    "prompt": "922",
+    "tokens": 105,
+    "advantage": -0.6209142208099365,
+    "truncated": false,
+    "grad_norm_grpo": 0.35406339168548584,
+    "grad_norm_dr_grpo": 0.07261065649800003
+  },
+  {
+    "prompt": "755",
+    "tokens": 563,
+    "advantage": 1.0547467470169067,
+    "truncated": false,
+    "grad_norm_grpo": 0.24824051558971405,
+    "grad_norm_dr_grpo": 0.2729675981972832
+  },
+  {
+    "prompt": "755",
+    "tokens": 249,
+    "advantage": -1.6268128156661987,
+    "truncated": false,
+    "grad_norm_grpo": 0.586796760559082,
+    "grad_norm_dr_grpo": 0.2853757683187723
+  },
+  {
+    "prompt": "755",
+    "tokens": 435,
+    "advantage": 0.4826807379722595,
+    "truncated": false,
+    "grad_norm_grpo": 0.13448138535022736,
+    "grad_norm_dr_grpo": 0.11425664575654082
+  },
+  {
+    "prompt": "755",
+    "tokens": 274,
+    "advantage": 0.08938532322645187,
+    "truncated": false,
+    "grad_norm_grpo": 0.03358050063252449,
+    "grad_norm_dr_grpo": 0.017970814791624434
+  },
+  {
+    "prompt": "457",
+    "tokens": 22,
+    "advantage": -1.5737673044204712,
+    "truncated": false,
+    "grad_norm_grpo": 2.07960844039917,
+    "grad_norm_dr_grpo": 0.08935817517340183
+  },
+  {
+    "prompt": "457",
+    "tokens": 44,
+    "advantage": 0.9710478782653809,
+    "truncated": false,
+    "grad_norm_grpo": 0.9377979636192322,
+    "grad_norm_dr_grpo": 0.08059201249852777
+  },
+  {
+    "prompt": "457",
+    "tokens": 33,
+    "advantage": -0.14509910345077515,
+    "truncated": false,
+    "grad_norm_grpo": 0.150288924574852,
+    "grad_norm_dr_grpo": 0.009686590841738507
+  },
+  {
+    "prompt": "457",
+    "tokens": 34,
+    "advantage": 0.7478184700012207,
+    "truncated": false,
+    "grad_norm_grpo": 0.7648147940635681,
+    "grad_norm_dr_grpo": 0.05078848241828382
+  },
+  {
+    "prompt": "832",
+    "tokens": 162,
+    "advantage": -0.5437957048416138,
+    "truncated": false,
+    "grad_norm_grpo": 0.22917963564395905,
+    "grad_norm_dr_grpo": 0.07251386909047142
+  },
+  {
+    "prompt": "832",
+    "tokens": 365,
+    "advantage": 1.7134695053100586,
+    "truncated": false,
+    "grad_norm_grpo": 0.3246293365955353,
+    "grad_norm_dr_grpo": 0.23142521065892652
+  },
+  {
+    "prompt": "832",
+    "tokens": 223,
+    "advantage": -0.3796309530735016,
+    "truncated": false,
+    "grad_norm_grpo": 0.143747940659523,
+    "grad_norm_dr_grpo": 0.06260896634194069
+  },
+  {
+    "prompt": "832",
+    "tokens": 416,
+    "advantage": -0.7900428175926208,
+    "truncated": false,
+    "grad_norm_grpo": 0.1713564097881317,
+    "grad_norm_dr_grpo": 0.13922708295285702
+  },
+  {
+    "prompt": "495",
+    "tokens": 8,
+    "advantage": -0.6940029859542847,
+    "truncated": false,
+    "grad_norm_grpo": 3.2078731060028076,
+    "grad_norm_dr_grpo": 0.05012301728129387
+  },
+  {
+    "prompt": "495",
+    "tokens": 11,
+    "advantage": 1.6193403005599976,
+    "truncated": false,
+    "grad_norm_grpo": 3.6650643348693848,
+    "grad_norm_dr_grpo": 0.07874161656945944
+  },
+  {
+    "prompt": "495",
+    "tokens": 8,
+    "advantage": -0.9463676810264587,
+    "truncated": false,
+    "grad_norm_grpo": 4.77733850479126,
+    "grad_norm_dr_grpo": 0.07464591413736343
+  },
+  {
+    "prompt": "495",
+    "tokens": 13,
+    "advantage": 0.02103039249777794,
+    "truncated": false,
+    "grad_norm_grpo": 0.05763126537203789,
+    "grad_norm_dr_grpo": 0.0014632938473368995
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "run_name": "standard",
+  "updates": 20,
+  "clip_epsilon": 0.2,
+  "kl_beta": 0.1,
+  "ppo_epochs": 2,
+  "prompts_per_update": 1,
+  "max_response_length": 512,
+  "seed": 6304,
+  "wall_clock_s": 360.9336927229997,
+  "peak_vram_gib": 6.665558338165283,
+  "gpu": "Tesla T4",
+  "adapter": "outputs/task2_ppo/standard"
+}

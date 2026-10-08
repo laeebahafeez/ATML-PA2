@@ -1,0 +1,64 @@
+{
+  "name": "sft",
+  "adapter": null,
+  "beta_for_loss": 0.1,
+  "generation": {
+    "n": 100,
+    "reward": {
+      "n": 100,
+      "mean": 0.9340595054626465,
+      "std": 1.479795807341282,
+      "median": 0.948486328125,
+      "iqr": 2.1134743690490723
+    },
+    "response_tokens": {
+      "n": 100,
+      "mean": 171.76,
+      "std": 95.34160896481663,
+      "median": 230.5,
+      "iqr": 163.75
+    },
+    "truncation_rate": 0.46,
+    "kl_seq_sum": {
+      "n": 100,
+      "mean": 0.0,
+      "std": 0.0,
+      "median": 0.0,
+      "iqr": 0.0
+    },
+    "kl_token_mean_per_seq": {
+      "n": 100,
+      "mean": 0.0,
+      "std": 0.0,
+      "median": 0.0,
+      "iqr": 0.0
+    },
+    "entropy_token_mean_per_seq": {
+      "n": 100,
+      "mean": 0.9915119763556188,
+      "std": 0.4750571553792437,
+      "median": 0.9539633393287659,
+      "iqr": 0.5693069426218669
+    },
+    "kl": 0.0,
+    "entropy": 1.0205176735013155
+  },
+  "word_limit": {
+    "n": 10,
+    "compliance_rate": 0.5,
+    "words": {
+      "n": 10,
+      "mean": 40.6,
+      "std": 17.21162397916013,
+      "median": 34.0,
+      "iqr": 33.0
+    },
+    "response_tokens": {
+      "n": 10,
+      "mean": 47.8,
+      "std": 19.72206885699368,
+      "median": 42.0,
+      "iqr": 35.75
+    }
+  }
+}
