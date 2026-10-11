@@ -102,7 +102,7 @@ Length-balanced (1 epoch) & 1438 & 0.675 & 0.614 & 0.0026 & 1.083 & +0.15\pmci{0
 \label{fig:ppo}
 \end{figure}
 
-\textbf{Standard continuation.} Figure~\ref{fig:ppo} shows that per-update reward (mean 1.52) is dominated by which prompt was sampled, KL to the reference stays within $\pm10^{-3}$, per-update entropy varies with the prompt (0.3--2.3) without a trend, and the clip fraction is exactly zero: the importance ratio never leaves $[0.958, 1.043]$. 40\% of rollouts hit the 512-token cap and receive the missing-EOS penalty, which explains the bimodal lengths. The released critic remains poorly calibrated (median explained variance $-4.7$, value loss 1.0--3.4), so GAE advantages are mostly driven by the terminal reward. On held-out prompts the standard continuation is not distinguishable from the midpoint ($\Delta$RM $-0.19\pm0.26$; entropy 0.999$\rightarrow$0.966).
+\textbf{Standard continuation.} Figure~\ref{fig:ppo} shows that per-update reward (mean 1.52) is dominated by which prompt was sampled, KL to the reference stays within $\pm10^{-3}$, per-update entropy varies with the prompt (0.3--2.3) without a trend, and the clip fraction is exactly zero: the importance ratio never leaves $[0.958, 1.043]$. 40\% of rollouts hit the 512-token cap and receive the missing-EOS penalty, which explains the bimodal lengths. The released critic remains poorly calibrated (median explained variance $-4.7$, value loss 1.0--3.4), so GAE advantages are mostly driven by the terminal reward. On held-out prompts the standard continuation is not distinguishable from the midpoint ($\Delta$RM $-0.19\pm0.26$; entropy 0.999$\rightarrow$0.966; length 312$\pm$268$\rightarrow$309$\pm$263 tokens).
 
 \begin{table}[t]
 \centering\small
@@ -111,16 +111,16 @@ Length-balanced (1 epoch) & 1438 & 0.675 & 0.614 & 0.0026 & 1.083 & +0.15\pmci{0
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{llccccccc}
 \toprule
-Study & Condition & cached clip & cached affected & RM & $\Delta$RM & KL & Entropy & tokens \\
+Study & Condition & cached clip & cached affected & RM & $\Delta$RM & KL & Entropy & tokens (mean$\pm$sd) \\
 \midrule
- & midpoint & -- & -- & 1.606 & -- & $-0.00003$ & 0.999 & 312 \\
-\multirow{3}{*}{Clipping} & $\epsilon=0.05$ & 0.154 & 0.076 & 1.629 & +0.02\pmci{0.29} & $-0.00008$ & 0.994 & 311 \\
- & $\epsilon=0.20$ & 0.041 & 0.020 & 1.629 & +0.02\pmci{0.29} & $-0.00008$ & 0.994 & 311 \\
- & $\epsilon=0.50$ & 0.021 & 0.010 & 1.629 & +0.02\pmci{0.29} & $-0.00008$ & 0.994 & 311 \\
+ & midpoint & -- & -- & 1.606 & -- & $-0.00003$ & 0.999 & 312$\pm$268 \\
+\multirow{3}{*}{Clipping} & $\epsilon=0.05$ & 0.154 & 0.076 & 1.629 & +0.02\pmci{0.29} & $-0.00008$ & 0.994 & 311$\pm$270 \\
+ & $\epsilon=0.20$ & 0.041 & 0.020 & 1.629 & +0.02\pmci{0.29} & $-0.00008$ & 0.994 & 311$\pm$270 \\
+ & $\epsilon=0.50$ & 0.021 & 0.010 & 1.629 & +0.02\pmci{0.29} & $-0.00008$ & 0.994 & 311$\pm$270 \\
 \midrule
-\multirow{3}{*}{KL pressure} & $\beta_{\text{KL}}=0$ & & & 1.635 & +0.03\pmci{0.28} & $-0.00002$ & 1.012 & 293 \\
- & $\beta_{\text{KL}}=0.10$ & & & 1.629 & +0.02\pmci{0.29} & $-0.00008$ & 0.994 & 311 \\
- & $\beta_{\text{KL}}=0.20$ & & & 1.555 & $-0.05$\pmci{0.21} & $-0.00002$ & 1.004 & 293 \\
+\multirow{3}{*}{KL pressure} & $\beta_{\text{KL}}=0$ & & & 1.635 & +0.03\pmci{0.28} & $-0.00002$ & 1.012 & 293$\pm$265 \\
+ & $\beta_{\text{KL}}=0.10$ & & & 1.629 & +0.02\pmci{0.29} & $-0.00008$ & 0.994 & 311$\pm$270 \\
+ & $\beta_{\text{KL}}=0.20$ & & & 1.555 & $-0.05$\pmci{0.21} & $-0.00002$ & 1.004 & 293$\pm$259 \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -138,7 +138,7 @@ Study & Condition & cached clip & cached affected & RM & $\Delta$RM & KL & Entro
 \label{fig:grpo}
 \end{figure}
 
-\textbf{Standard continuation.} With a continuous reward, every group is informative (uninformative fraction 0) and the mean within-group reward s.d.\ is 0.54 (Figure~\ref{fig:grpo}). KL stays at $\sim\!10^{-4}$ and held-out reward is indistinguishable from the midpoint ($+0.05\pm0.17$). The dominant source of instability (RQ3) is not the absent critic but \emph{prompt-level variance and truncation}: per-update mean reward ranges from $-0.98$ to 3.19 (s.d.\ 1.12 across updates, twice the within-group s.d.), and 35\% of completions (28/80) hit the 512-token cap and are masked, so one in three samples contributes no gradient.
+\textbf{Standard continuation.} With a continuous reward, every group is informative (uninformative fraction 0; a group counts as uninformative when its reward s.d.\ is below $10^{-6}$, the tolerance we use throughout since the release ships no helper for it) and the mean within-group reward s.d.\ is 0.54 (Figure~\ref{fig:grpo}). KL stays at $\sim\!10^{-4}$ and held-out reward is indistinguishable from the midpoint ($+0.05\pm0.17$; length 302$\pm$262$\rightarrow$303$\pm$256 tokens). The dominant source of instability (RQ3) is not the absent critic but \emph{prompt-level variance and truncation}: per-update mean reward ranges from $-0.98$ to 3.19 (s.d.\ 1.12 across updates, twice the within-group s.d.), and 35\% of completions (28/80) hit the 512-token cap and are masked, so one in three samples contributes no gradient.
 
 \begin{table}[t]
 \centering\small
@@ -158,7 +158,7 @@ $K$ (groups) & informative & weak (s.d.$<$0.1) & group s.d. & Var$(r-\mu_g)$ & a
 
 \textbf{Group size (RQ1).} Table~\ref{tab:k} shows that under a continuous RM almost every group has non-zero variance at any $K$, so the informative rate is not the binding constraint; what improves with $K$ is \emph{signal quality}: weak groups drop from 26\% to 4\%, and the correlation of a group's advantages with the full 8-sample baseline rises from 0.62 to 0.88. Medium and easy prompts benefit most (weak groups fall from 23--31\% to 0\% at $K{=}8$), whereas hard prompts keep 12.5\% weak groups even at $K{=}8$ because one hard prompt's completions all receive nearly the same reward. With a binary reward the picture changes sharply: hard prompts are \emph{never} informative at any $K$ (all completions fail), medium prompts go from 41\% to 100\% informative, and easy prompts stay below 40\% --- exactly the low-resolution regime where larger $K$ is worth its generation cost.
 
-\textbf{Sequence normalization (RQ2).} Canonical GRPO divides each completion's token sum by its length $T_k$; Dr.-GRPO divides by the constant $L_{\max}$. Measured on identical cached completions at the midpoint (Figure~\ref{fig:norm}), canonical GRPO assigns 71.5\% of total gradient norm to the shortest tercile and only 12.5\% to the longest (long/short mean-norm ratio 0.18, $r(\text{length},\|g\|)=-0.46$), whereas Dr.-GRPO reverses this (55.3\% to the longest, ratio 4.33, $r=+0.59$). In the matched 8-update forks (8543 vs.\ 8506 generated tokens) this reallocation did not translate into behaviour: held-out reward 1.634 vs.\ 1.596, length 320 vs.\ 308 tokens and KL $8\cdot10^{-5}$ vs.\ $3\cdot10^{-5}$ are all within noise. Masking interacts with normalization: the longest completions are exactly the truncated ones (11/32 and 12/32 masked), so neither variant learns from them, and in the Dr.-GRPO fork the masked completions also had low reward (0.72 vs.\ 1.52 kept).
+\textbf{Sequence normalization (RQ2).} Canonical GRPO divides each completion's token sum by its length $T_k$; Dr.-GRPO divides by the constant $L_{\max}$. Measured on identical cached completions at the midpoint (Figure~\ref{fig:norm}), canonical GRPO assigns 71.5\% of total gradient norm to the shortest tercile and only 12.5\% to the longest (long/short mean-norm ratio 0.18, $r(\text{length},\|g\|)=-0.46$), whereas Dr.-GRPO reverses this (55.3\% to the longest, ratio 4.33, $r=+0.59$). In the matched 8-update forks (8543 vs.\ 8506 generated tokens) this reallocation did not translate into behaviour: held-out reward 1.634 vs.\ 1.596, length 320$\pm$269 vs.\ 308$\pm$267 tokens (mean$\pm$sd) and KL $8\cdot10^{-5}$ vs.\ $3\cdot10^{-5}$ are all within noise. Masking interacts with normalization: the longest completions are exactly the truncated ones (11/32 and 12/32 masked), so neither variant learns from them, and in the Dr.-GRPO fork the masked completions also had low reward (0.72 vs.\ 1.52 kept).
 
 % ====================================================================================
 \section{Task 4 --- Safety calibration}
