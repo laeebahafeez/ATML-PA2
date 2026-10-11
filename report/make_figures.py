@@ -95,7 +95,8 @@ def trajectories(series: dict, keys, title, fname, ncols=4):
         ax.set_xlabel("update")
         ax.xaxis.set_major_locator(matplotlib.ticker.MaxNLocator(integer=True))
     if len(series) > 1:
-        axes.flat[0].legend(loc="best")
+        h, l = axes.flat[0].get_legend_handles_labels()
+        fig.legend(h, l, loc="lower center", ncol=min(len(l), 5), bbox_to_anchor=(0.5, -0.06 * nrows))
     fig.suptitle(title, y=1.02, fontsize=9)
     fig.tight_layout()
     save(fig, fname)
