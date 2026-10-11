@@ -65,10 +65,14 @@ gradients as the released full-batch loss.
 
 ## Implementation notes and protocol decisions
 
-- **DPO over-long prompts.** `encode_prompt_response` raises when the prompt alone does not fit
-  `max_sequence_length=768`. Pairs whose prompt leaves fewer than 32 response tokens are filtered
-  deterministically for every condition: about 3.7% of each split (56/1500 standard train, 62/1500
-  length-balanced train, 10/300 eval, 9/246 stratified eval). Dropped ids are logged in
+- **DPO sequence-length handling.** We use the released prompt-preserving preprocessing
+  (`common/data.encode_prompt_response`, TA patch): when prompt + response exceeds
+  `max_sequence_length=768`, the prompt is kept and the response is truncated (EOS kept). Pairs
+  whose prompt alone leaves fewer than 32 response tokens (the encoder raises on them) are filtered.
+  The same rule applies to every DPO training and evaluation run. Filtered: 56/1500 standard train,
+  62/1500 length-balanced train, 10/300 standard eval, 9/246 stratified eval. Response truncation
+  then affects 15.9% of retained standard-train pairs (171 chosen, 131 rejected), 17.2% of standard
+  eval, 2.6% of balanced train and 3.0% of stratified eval pairs. Dropped ids are logged in
   `results/task1_dpo/train_*_summary.json`.
 - **DPO budgets.** The standard and length-balanced models train one full epoch. The beta forks
   train on the first 600 (filtered) pairs, with the same seed/order/optimizer/LoRA settings.
