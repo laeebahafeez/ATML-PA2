@@ -24,13 +24,14 @@ C = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7"
 INK, INK2, GRID = "#0b0b0b", "#52514e", "#e4e3df"
 
 plt.rcParams.update({
-    "font.size": 8, "axes.titlesize": 8, "axes.labelsize": 8, "legend.fontsize": 7,
-    "xtick.labelsize": 7, "ytick.labelsize": 7, "axes.edgecolor": INK2, "axes.labelcolor": INK,
+    "font.size": 8, "axes.titlesize": 8, "axes.labelsize": 8, "legend.fontsize": 7.5,
+    "xtick.labelsize": 7.5, "ytick.labelsize": 7.5, "axes.edgecolor": INK2, "axes.labelcolor": INK,
     "xtick.color": INK2, "ytick.color": INK2, "axes.grid": True, "grid.color": GRID, "grid.linewidth": 0.6,
     "axes.spines.top": False, "axes.spines.right": False, "lines.linewidth": 1.6, "lines.markersize": 4,
     "legend.frameon": False, "savefig.bbox": "tight", "pdf.fonttype": 42, "axes.formatter.useoffset": False,
 })
 LINES: list[str] = []
+TEXT_W, HALF_W = 5.5, 2.7  # NeurIPS text width and half width (inches): figures are drawn at printed size
 
 
 def load(rel):
@@ -65,14 +66,13 @@ def table(header, rows):
 
 def bar_panels(names, panels, title, fname, colors=None):
     """One small panel per metric (never a shared dual axis)."""
-    fig, axes = plt.subplots(1, len(panels), figsize=(1.75 * len(panels), 2.3))
+    fig, axes = plt.subplots(1, len(panels), figsize=(TEXT_W, 2.0))
     for ax, (label, vals) in zip(np.atleast_1d(axes), panels):
         x = np.arange(len(names))
         ax.bar(x, [np.nan if v is None else v for v in vals], color=colors or C[0], width=0.7, edgecolor="white", linewidth=1)
         ax.set_xticks(x, names, rotation=35, ha="right")
         ax.set_title(label, color=INK)
         ax.grid(axis="x", visible=False)
-    fig.suptitle(title, y=1.04, fontsize=9)
     fig.tight_layout()
     save(fig, fname)
 
@@ -82,7 +82,7 @@ def trajectories(series: dict, keys, title, fname, ncols=4):
     if not keys:
         return
     nrows = int(np.ceil(len(keys) / ncols))
-    fig, axes = plt.subplots(nrows, ncols, figsize=(1.85 * ncols, 1.55 * nrows), squeeze=False)
+    fig, axes = plt.subplots(nrows, ncols, figsize=(TEXT_W, 1.45 * nrows + 0.25), squeeze=False)
     for ax in axes.flat[len(keys):]:
         ax.axis("off")
     for ax, (k, lab) in zip(axes.flat, keys):
@@ -93,11 +93,10 @@ def trajectories(series: dict, keys, title, fname, ncols=4):
                     marker="o" if len(log) <= 10 else None)
         ax.set_title(lab, color=INK)
         ax.set_xlabel("update")
-        ax.xaxis.set_major_locator(matplotlib.ticker.MaxNLocator(integer=True))
+        ax.xaxis.set_major_locator(matplotlib.ticker.MaxNLocator(nbins=4, integer=True))
     if len(series) > 1:
         h, l = axes.flat[0].get_legend_handles_labels()
         fig.legend(h, l, loc="lower center", ncol=min(len(l), 5), bbox_to_anchor=(0.5, -0.06 * nrows))
-    fig.suptitle(title, y=1.02, fontsize=9)
     fig.tight_layout()
     save(fig, fname)
 
@@ -118,8 +117,8 @@ def budget_table(task, runs, completions_per_update):
 # ------------------------------------------------------------------------------- Task 1
 def task1():
     print("Task 1")
-    names = [("sft", "SFT"), ("beta_0p03", "β=0.03 (600)"), ("beta_0p1", "β=0.10 (600)"), ("beta_0p3", "β=0.30 (600)"),
-             ("standard", "standard β=0.10 (1 ep)"), ("length_balanced", "length-bal. (1 ep)")]
+    names = [("sft", "SFT"), ("beta_0p03", "β.03"), ("beta_0p1", "β.10"), ("beta_0p3", "β.30"),
+             ("standard", "Std"), ("length_balanced", "LenBal")]
     rows, ev = [], {}
     for key, lab in names:
         e = load(f"task1_dpo/eval_{key}.json")
@@ -152,15 +151,16 @@ def task1():
         se = la["stratified_eval"]
         table(["model"] + [f"acc {s}" for s in strata] + ["corr(margin, len diff)"],
               [[m] + [f(se[m].get(s, {}).get("preference_accuracy")) for s in strata] + [f(se[m]["corr_margin_vs_length_diff"])] for m in se])
-        fig, ax = plt.subplots(figsize=(3.4, 2.0))
+        fig, ax = plt.subplots(figsize=(HALF_W, 2.0))
         x, w = np.arange(len(strata)), 0.38
         for i, m in enumerate(se):
             ax.bar(x + (i - 0.5) * w, [se[m].get(s, {}).get("preference_accuracy", np.nan) for s in strata], w, color=C[i],
                    label=m.replace("_", "-"), edgecolor="white", linewidth=1)
         ax.axhline(0.5, color=INK2, lw=0.8, ls="--")
-        ax.set_xticks(x, [s.replace("_", "-") for s in strata])
+        ax.set_xticks(x, ["preferred\nlonger", "matched\nlength", "rejected\nlonger"])
         ax.set_ylabel("held-out pref. accuracy")
-        ax.legend(loc="upper right")
+        ax.set_ylim(0, 1.0)
+        ax.legend(loc="upper left", ncol=2, handlelength=1.0, columnspacing=0.8)
         ax.grid(axis="x", visible=False)
         save(fig, "t1_length_strata")
 
@@ -191,7 +191,7 @@ def task2():
         LINES.append("## Task 2 - cached-batch clipping geometry\n")
         LINES.append(f"{cc['n_rollouts']} rollouts, {cc['n_tokens']} response tokens, skipped {len(cc['skipped'])}.\n")
         rows = []
-        fig, axes = plt.subplots(1, 3, figsize=(6.4, 1.9))
+        fig, axes = plt.subplots(1, 3, figsize=(TEXT_W, 1.85))
         for i, (eps, steps) in enumerate(cc["per_epsilon"].items()):
             st = [s["step"] for s in steps]
             for ax, k in zip(axes, ["clip_fraction", "affected_fraction", "approx_kl_old_new"]):
@@ -256,7 +256,7 @@ def task3():
                              f(e["binarized"][b]["permutation_mean"]["informative_rate"])])
         table(["K", "bin", "groups", "informative", "weak@0.1", "group std", "centered var", "adv corr vs K8", "sign agree", "binarized informative"], rows)
         ks = list(gs["by_k"])
-        fig, axes = plt.subplots(1, 3, figsize=(6.4, 1.9))
+        fig, axes = plt.subplots(1, 3, figsize=(TEXT_W, 1.85))
         for i, b in enumerate(["hard", "medium", "easy"]):
             for ax, (key, src) in zip(axes, [("weak_rate@0.1", None), ("adv_corr_vs_k8", None), ("informative_rate", "binarized")]):
                 vals = [(gs["by_k"][k][src][b] if src else gs["by_k"][k][b])["permutation_mean"][key] for k in ks]
@@ -280,13 +280,13 @@ def task3():
                          f(m["corr_tokens_vs_grad_norm"])])
         table(["loss", "held-out R", "KL", "len", "train mass short", "train mass long", "corr(len, mass)", "measured long/short |g|", "corr(len, |g|)"], rows)
         budget_table("task3_grpo", [d["run"] for d in nc["forks"].values()], int(load("task3_grpo/standard/summary.json")["num_generations"]))
-        fig, ax = plt.subplots(figsize=(3.2, 1.9))
+        fig, ax = plt.subplots(figsize=(HALF_W, 2.0))
         bins, w = ["short", "medium", "long"], 0.38
         for i, lt in enumerate(nc["measured_gradient_norms_on_cache"]):
             m = nc["measured_gradient_norms_on_cache"][lt]
-            ax.bar(np.arange(3) + (i - 0.5) * w, [m[b]["share_of_total"] for b in bins], w, color=C[i], label=lt, edgecolor="white", linewidth=1)
+            ax.bar(np.arange(3) + (i - 0.5) * w, [m[b]["share_of_total"] for b in bins], w, color=C[i], label={"grpo": "GRPO (1/T)", "dr_grpo": "Dr.-GRPO (1/L)"}[lt], edgecolor="white", linewidth=1)
         ax.set_xticks(range(3), bins)
-        ax.set_xlabel("completion length tercile (measured on the K-cache at the midpoint)")
+        ax.set_xlabel("completion length tercile")
         ax.set_ylabel("share of total |grad|")
         ax.legend()
         ax.grid(axis="x", visible=False)
@@ -317,7 +317,7 @@ def task4():
             f(d.get("phrase_refusal_rate_unsafe"))] for p, d in pp.items()])
     import csv
     cat = list(csv.DictReader((RES / "task4_safety/category_label_distribution.csv").open(encoding="utf-8")))
-    fig, axes = plt.subplots(1, 2, figsize=(6.6, 2.4))
+    fig, axes = plt.subplots(1, 2, figsize=(TEXT_W, 2.35))
     for ax, cls in zip(axes, ["SAFE", "UNSAFE"]):
         rows = [r for r in cat if r["benchmark_class"] == cls]
         pols = list(pp)
@@ -329,7 +329,8 @@ def task4():
         ax.set_xticks(range(len(pols)), [p.upper() for p in pols])
         ax.set_title(f"{cls.lower()} prompts: judge label share", color=INK)
         ax.grid(axis="x", visible=False)
-    axes[1].legend(loc="center left", bbox_to_anchor=(1.0, 0.5))
+    h, l = axes[1].get_legend_handles_labels()
+    fig.legend(h, l, loc="lower center", ncol=5, bbox_to_anchor=(0.5, -0.08), handlelength=1.0, columnspacing=0.8)
     fig.tight_layout()
     save(fig, "t4_safety_labels")
     a = s.get("manual_audit")
@@ -371,7 +372,7 @@ def task5():
         LINES.append(f"S_reason: RLVR {f(d['S_reason_rlvr'])}, RLAIF {f(d['S_reason_rlaif'])}; S_outcome: RLVR {f(d['S_outcome_rlvr'])}, RLAIF {f(d['S_outcome_rlaif'])}.\n")
         table(["variant", "mean exact reward", "mean RLAIF group reward"],
               [[k, f(v["mean_exact_reward"]), f(v["mean_rlaif_group_reward"])] for k, v in d["by_variant"].items()])
-        fig, axes = plt.subplots(1, 2, figsize=(6.4, 2.1), sharey=True)
+        fig, axes = plt.subplots(1, 2, figsize=(TEXT_W, 2.3), sharey=True)
         pert = list(bp)
         for ax, mech in zip(axes, ["rlvr", "rlaif"]):
             bottom = np.zeros(len(pert))
@@ -382,7 +383,8 @@ def task5():
             ax.set_xticks(range(len(pert)), [x.replace("_correct", "").replace("_final", "").replace("_", " ") for x in pert], rotation=25, ha="right")
             ax.set_title(mech.upper(), color=INK)
             ax.grid(axis="x", visible=False)
-        axes[1].legend(loc="center left", bbox_to_anchor=(1.0, 0.5))
+        h, l = axes[1].get_legend_handles_labels()
+        fig.legend(h, l, loc="lower center", ncol=3, bbox_to_anchor=(0.5, -0.06))
         fig.tight_layout()
         save(fig, "t5_diagnostics")
     c = load("task5_feedback/feedback_comparison.json")

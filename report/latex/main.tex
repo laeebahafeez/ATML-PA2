@@ -40,22 +40,28 @@ We study how optimization constraints and reward sources shape what Qwen2.5-1.5B
 
 % ====================================================================================
 \section{Introduction}
-Post-training turns a next-token predictor into a policy shaped by preferences, learned rewards or verifiable outcomes. Whether an objective improves its own score is rarely in doubt; the question is what behaviour that score buys, what drifts from the reference model, and which failures the training signal cannot see. We compare three optimizers---offline Direct Preference Optimization (DPO)~\cite{rafailov2023dpo}, Proximal Policy Optimization (PPO)~\cite{schulman2017ppo,ouyang2022instructgpt} and Group Relative Policy Optimization (GRPO)~\cite{shao2024deepseekmath,liu2025understanding}---then audit safety calibration on XSTest~\cite{rottger2023xstest} and contrast verifiable (RLVR) with AI-feedback (RLAIF) rewards~\cite{deepseek2025r1,lee2024rlaif}. Our unifying question: \emph{how do optimization constraints and reward sources shape what the model learns to optimize, and when do measured objectives fail to match the behaviour we want?} Every claim below traces to a file in \texttt{results/} produced by a single command in the repository README.
+Post-training turns a next-token predictor into a policy shaped by preferences, learned rewards or verifiable outcomes. Whether an objective improves its own score is rarely in doubt; the question is what behaviour that score buys, what drifts from the reference model, and which failures the training signal cannot see. We compare three optimizers---offline Direct Preference Optimization (DPO)~\cite{rafailov2023dpo}, Proximal Policy Optimization (PPO)~\cite{schulman2017ppo,ouyang2022instructgpt} and Group Relative Policy Optimization (GRPO)~\cite{shao2024deepseekmath,liu2025understanding}---then audit safety calibration on XSTest~\cite{rottger2023xstest} and contrast verifiable (RLVR) with AI-feedback (RLAIF) rewards~\cite{deepseek2025r1,lee2024rlaif}. Our unifying question: \emph{how do optimization constraints and reward sources shape what the model learns to optimize, and when do measured objectives fail to match the behaviour we want?} Section~\ref{sec:protocol} describes the protocol, Sections 3--7 report one task each, and Section 8 synthesises them; Appendix~\ref{app:impl} documents implementation and validation and Appendix~\ref{app:results} gives additional figures per task. Every claim traces to a file in \texttt{results/} produced by a single command in the repository README.
 
 % ====================================================================================
-\section{Experimental setup}
-\textbf{Models and data.} All policies are Qwen2.5-1.5B-Instruct~\cite{qwen2.5} with rank-8 LoRA~\cite{hu2021lora} on $q,v$ projections; the frozen reference is the base model with the adapter disabled. Rewards come from a fixed 1.5B UltraFeedback~\cite{cui2023ultrafeedback} reward model (RM); judges are Qwen2.5-3B-Instruct (4-bit). Data, prompt pools, checkpoints and caches are the course release. Runs used one Tesla T4 (fp16) on Kaggle.
+\section{Experimental protocol}
+\label{sec:protocol}
+\textbf{Shared setup.} All policies are Qwen2.5-1.5B-Instruct~\cite{qwen2.5} with rank-8 LoRA~\cite{hu2021lora} on the attention $q,v$ projections; the frozen reference $\pi_{\text{ref}}$ is the same network with the adapter disabled. The reward model (RM) is a fixed 1.5B UltraFeedback-trained scorer~\cite{cui2023ultrafeedback}; both AI judges are Qwen2.5-3B-Instruct (4-bit). Data, prompt pools, checkpoints and caches are the fixed course release; all runs used one Tesla T4 (fp16, seed 6304). Before any experiment we validated the three released objectives against the manual's equations with unit tests; each test fails on the released code and passes after one correction (DPO reference-margin sign, PPO $\max\!\rightarrow\!\min$, per-group GRPO normalisation; Appendix~\ref{app:impl}). For Tasks 1--3, held-out behaviour is one sampled response per fixed prompt ($T{=}0.7$, top-$p{=}0.9$, fixed seed), scored by the RM; KL is the course's token-weighted sampled estimator $\mathbb{E}_{y\sim\pi_\theta}[\log\pi_\theta(y_t)-\log\pi_{\text{ref}}(y_t)]$, which can be slightly negative when drift is negligible; entropy is the exact full-vocabulary token entropy; length counts generated tokens. Because one sample per prompt is noisy (RM s.d.\ $\approx$1.5), we compare conditions with \emph{paired} differences on identical prompts and report 95\% confidence intervals.
 
-\textbf{Objective validation.} Unit tests derived from the manual's equations fail on the released code and pass after three fixes: (i) DPO logit used $\beta(\Delta_\pi+\Delta_{\text{ref}})$ instead of $\beta(\Delta_\pi-\Delta_{\text{ref}})$, which makes the initial loss depend on the reference margin instead of equalling $\log 2$; (ii) PPO took $\max(\rho A,\text{clip}(\rho)A)$, removing the trust region; (iii) GRPO standardized rewards over the whole batch, ignoring prompt groups. A further test checks that our micro-batched GRPO step reproduces the released full-batch loss and gradients exactly.
+\textbf{Task 1 (DPO).} For a pair $(x,y^+,y^-)$, DPO minimises $-\log\sigma(\beta\,m_\theta)$ with margin
+$m_\theta=[\log\pi_\theta(y^+|x)-\log\pi_{\text{ref}}(y^+|x)]-[\log\pi_\theta(y^-|x)-\log\pi_{\text{ref}}(y^-|x)]$,
+where sequence log-probabilities sum over response tokens~\cite{rafailov2023dpo}. We train a standard model (one epoch, $\beta{=}0.1$, 1444 pairs), three short forks with $\beta\in\{0.03,0.1,0.3\}$ on the same first 600 pairs, and a length-balanced model (one epoch on the balanced file), all from the original initialisation with AdamW (lr $2\cdot10^{-5}$, effective batch 16, gradient clipping 1.0). Sequences use the released prompt-preserving preprocessing: if prompt + response exceeds 768 tokens the response is truncated; pairs whose prompt alone leaves fewer than 32 response tokens are filtered, identically for every run (3.3--4.1\% of each split; truncation statistics in Appendix~\ref{app:impl}). Each model is evaluated on 290 held-out pairs (preference accuracy = fraction with $m_\theta>0$), on the first 100 held-out prompts (256-token cap), on the length-stratified set, and on 10 fixed word-limit prompts (greedy).
 
-\textbf{Common protocol.} For every Task 1--3 condition, held-out behaviour is one sampled response per fixed prompt (seed 6304, $T{=}0.7$, top-$p{=}0.9$; first 100 held-out DPO prompts with a 256-token cap, or first 64 held-out RL prompts with a 768-token cap). Metrics follow the manual: KL is the token-weighted sampled estimator $\mathbb{E}[\log\pi_\theta-\log\pi_{\text{ref}}]$ (it can be slightly negative when drift is tiny), entropy is the exact full-vocabulary token entropy, and length counts response tokens. Because one sample per prompt is noisy (RM score s.d.\ $\approx$1.5), we report \emph{paired} differences on identical prompts with 95\% CIs. Following common RLHF implementation practice~\cite{huang2024nplus}, in PPO/GRPO LoRA dropout is disabled so the importance ratio is exactly 1 before the first step, and all forks share one seeded prompt schedule (generated-token budgets agree within 2.4\%).
+\textbf{Task 2 (PPO).} PPO maximises the clipped surrogate $\mathbb{E}_t[\min(\rho_tA_t,\operatorname{clip}(\rho_t,1{-}\epsilon,1{+}\epsilon)A_t)]$ with $\rho_t=\pi_\theta(a_t|s_t)/\pi_{\text{old}}(a_t|s_t)$~\cite{schulman2017ppo}, on KL-shaped rewards $r_t=r_{\text{RM}}\mathbf{1}[t{=}T]-\beta_{\text{KL}}(\log\pi_\theta-\log\pi_{\text{ref}})$ with GAE advantages ($\gamma{=}1$, $\lambda{=}0.95$)~\cite{schulman2016gae} from the supplied critic. From the supplied midpoint we run the standard 20-update continuation ($\epsilon{=}0.2$, $\beta_{\text{KL}}{=}0.1$, one prompt per update, two PPO epochs, lr $3\cdot10^{-6}$, 512-token cap, $-1$ penalty for a missing EOS) and 8-update forks for $\epsilon\in\{0.05,0.2,0.5\}$ and $\beta_{\text{KL}}\in\{0,0.1,0.2\}$, each from the identical policy/critic state with the same seeded prompt schedule (generated tokens within 2.4\%). LoRA dropout is disabled so $\rho_t{=}1$ before each first step~\cite{huang2024nplus}. On the supplied cached batch (32 rollouts, 8814 tokens) we report the \emph{clip fraction} (tokens with $\rho_t$ outside the band) and the \emph{affected fraction} (tokens whose gradient the min zeroes). The fork stability statistic is the largest per-update approx-KL$(\pi_{\text{old}}\|\pi_{\text{new}})$.
 
-\textbf{DPO sequence-length handling.} We use the released prompt-preserving preprocessing: when prompt + response exceeds 768 tokens, the prompt is kept intact and the \emph{response} is truncated (keeping EOS). Pairs whose prompt alone leaves fewer than 32 response tokens, on which the released encoder raises, are filtered out. The same rule is applied to every DPO training and evaluation run. Filtering removes 3.3--4.1\% of pairs (56/1500 standard train, 62/1500 balanced train, 10/300 standard held-out, 9/246 stratified held-out); response truncation then affects 15.9\% of retained standard training pairs (171 chosen and 131 rejected responses), 17.2\% of standard held-out pairs, but only 2.6\% of balanced training and 3.0\% of stratified held-out pairs. Its implications for the length analysis are discussed in Section~3.
+\textbf{Task 3 (GRPO).} For $K$ completions of one prompt, GRPO uses the critic-free advantage $A_k=(r_k-\mu_r)/(\sigma_r+\varepsilon)$ computed \emph{within} the prompt group~\cite{shao2024deepseekmath}, the PPO-style clipped objective, and a k3 KL penalty ($\beta{=}0.1$). Canonical GRPO weights each completion's token sum by $1/T_k$; the Dr.-GRPO variant uses the constant $1/L_{\max}$~\cite{liu2025understanding}. We run the standard 20-update continuation ($K{=}4$, lr $5\cdot10^{-6}$, completions reaching the 512-token cap masked) and matched 8-update forks for the two normalisations. A group is \emph{uninformative} when its reward s.d.\ is below $10^{-6}$ (the release ships no helper for this tolerance). The group-size study regroups the supplied cache of 24 prompts $\times$ 8 completions at equal total generations, and the normalisation study measures each completion's gradient norm on identical cached completions at the midpoint.
 
-\textbf{Other deviations.} Task 4 judging batches the released prompt/parser with greedy decoding (8 examples per call). We verified this against the released unbatched \texttt{judge\_one} on all 110 distinct audited responses: 109/110 labels are identical, the unbatched judge also emits no \textsc{over\_refusal} label, and the single mismatch is a borderline response that the batched judge already labelled inconsistently across batches (447 of 448 duplicated responses received identical labels). The manual audit labels each distinct response once and propagates the label to every (prompt, policy) pair that produced it (110 labels $\rightarrow$ 240 pairs).
+\textbf{Task 4 (safety).} The four frozen policies (SFT, standard DPO, PPO and GRPO from Step 1 of each task) answer all 450 XSTest prompts~\cite{rottger2023xstest} with greedy decoding and a 256-token cap. The released 3B judge assigns one of five behaviour labels; rates follow the release spec, e.g.\ over-refusal $=P(\textsc{over\_refusal}\mid\text{safe})$. Judge calls are batched (8 per call) with the released prompt, template, greedy decoding and parser, which we verified against the released unbatched judge (Appendix~\ref{app:impl}). For the manual audit, the fixed 60-prompt subset (30 safe, 30 unsafe) was labelled blind to policy and judge label; each of the 110 distinct responses was labelled once and the label propagated to all 240 prompt--policy pairs.
+
+\textbf{Task 5 (RLVR vs.\ RLAIF).} RLVR's reward is $\mathbf{1}[\text{verifier}(y)=\text{gold}]$, where the released parser reads only the last designated \texttt{\#\#\#\# N}. RLAIF's group reward is $(\text{wins}(y_k)+0.5\,\text{ties}(y_k))/(K-1)$ from pairwise judgements of the 3B judge~\cite{lee2024rlaif}. We evaluate the frozen SFT, RLVR and RLAIF policies with greedy decoding (512-token cap) on 300 GSM8K~\cite{cobbe2021gsm8k} and 100 SVAMP~\cite{patel2021svamp} problems, and score the 20-problem controlled diagnostic set, comparing each perturbation with \texttt{clean\_correct}; RLAIF verdicts are averaged over both presentation orders. $S_{\text{reason}}$ and $S_{\text{outcome}}$ are the fractions of reasoning-only and outcome-changing pairs in which the mechanism strictly prefers the better response.
 
 % ====================================================================================
 \section{Task 1 --- Direct Preference Optimization}
+\label{sec:dpo}
 \begin{table}[t]
 \centering\small
 \caption{DPO summary. Held-out loss/accuracy on 290 pairs ($\pm0.055$ 95\% CI on accuracy); KL, RM score, length and word-limit compliance from the common generation protocol (100 prompts, 256-token cap). $\Delta$RM: paired difference to SFT (95\% CI). \textbf{Budgets differ:} the three short $\beta$ forks use 600 pairs (38 steps); the standard and length-balanced runs use one full epoch (91/90 steps). Loss is computed at each run's own $\beta$ and is not comparable across $\beta$.}
@@ -75,11 +81,11 @@ Length-balanced (1 epoch) & 1438 & 0.675 & 0.614 & 0.0026 & 1.083 & +0.15\pmci{0
 \end{tabular}}
 \end{table}
 
-\textbf{Preference strength and drift (RQ1).} The standard run took 22\,min (91 optimizer steps, 6.7\,GiB). Over the tested range $\beta$ has no detectable effect on what is learned (Table~\ref{tab:dpo}): accuracy (0.634, 0.631, 0.624, each $\pm0.055$), mean margin (0.154, 0.157, 0.156 nats) and KL are flat, the per-pair margins of the $\beta{=}0.03$ and $\beta{=}0.3$ models correlate at 0.98, the $\beta$ forks produce word-for-word identical samples on 72--75\% of prompts, and the apparent rise in RM score is not significant ($\beta{=}0.3$ minus $\beta{=}0.03$: $+0.07\pm0.09$). The reason is the operating regime. The DPO gradient is $-\beta\,\sigma(-\beta m)\nabla m$, and $\beta$ regularises only through $\sigma(-\beta m)$, which down-weights pairs that are already separated and makes the optimum the KL-anchored $\pi^\ast\propto\pi_{\text{ref}}\exp(r/\beta)$. Here $\beta m\le0.05$, so $\sigma(-\beta m)\approx\tfrac12$ for every pair and $\beta$ only scales the gradient --- a scale that gradient clipping (active on every step for $\beta\ge0.1$; mean pre-clip norms 0.63, 2.06, 6.11) and Adam's per-parameter normalisation both remove. Updates, and therefore margins, KL and samples, are nearly identical across $\beta$; the relationship is flat rather than monotonic, and $\beta$ would only start to matter near convergence. More data, not larger $\beta$, moves the model: the one-epoch run grows the margin 2.6$\times$ without raising accuracy, and does so by lowering \emph{both} responses (chosen $-0.45$, rejected $-0.85$ nats), the likelihood displacement of DPO~\cite{razin2024unintentional} that drives the length effect below.
+\textbf{Preference strength and drift (RQ1).} The standard run took 22\,min (91 optimizer steps, 6.7\,GiB). Over the tested range $\beta$ has no detectable effect on what is learned (Table~\ref{tab:dpo}): accuracy (0.634, 0.631, 0.624, each $\pm0.055$), mean margin (0.154, 0.157, 0.156 nats) and KL are flat, the per-pair margins of the $\beta{=}0.03$ and $\beta{=}0.3$ models correlate at 0.98, the $\beta$ forks produce word-for-word identical samples on 72--75\% of prompts, and the apparent rise in RM score is not significant ($\beta{=}0.3$ minus $\beta{=}0.03$: $+0.07\pm0.09$). The reason is the operating regime. The DPO gradient is $-\beta\,\sigma(-\beta m)\nabla m$, and $\beta$ regularises only through $\sigma(-\beta m)$, which down-weights pairs that are already separated and makes the optimum the KL-anchored $\pi^\ast\propto\pi_{\text{ref}}\exp(r/\beta)$. Here $\beta m\le0.05$, so $\sigma(-\beta m)\approx\tfrac12$ for every pair and $\beta$ only scales the gradient --- a scale that gradient clipping (active on every step for $\beta\ge0.1$; mean pre-clip norms 0.63, 2.06, 6.11) and Adam's per-parameter normalisation both remove. Updates, and therefore margins, KL and samples, are nearly identical across $\beta$; the relationship is flat rather than monotonic, and $\beta$ would only start to matter near convergence. More data, not larger $\beta$, moves the model: the one-epoch run grows the margin 2.6$\times$ without raising accuracy, and does so by lowering \emph{both} responses (chosen $-0.45$, rejected $-0.85$ nats), the likelihood displacement of DPO~\cite{razin2024unintentional} that drives the length effect below (training curves in Figure~\ref{fig:app_dpo}).
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.5\linewidth]{figures/t1_length_strata.pdf}
+\includegraphics[width=0.49\linewidth]{figures/t1_length_strata.pdf}
 \caption{Held-out preference accuracy by length stratum (78--80 pairs each, s.e.\ $\approx0.055$; dashed line: chance). Both DPO models rank \emph{rejected-longer} pairs best.}
 \label{fig:strata}
 \end{figure}
@@ -92,7 +98,7 @@ Length-balanced (1 epoch) & 1438 & 0.675 & 0.614 & 0.0026 & 1.083 & +0.15\pmci{0
 \section{Task 2 --- Proximal Policy Optimization}
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.93\linewidth]{figures/t2_ppo_standard.pdf}
+\includegraphics[width=\linewidth]{figures/t2_ppo_standard.pdf}
 \caption{Standard 20-update PPO continuation from the supplied midpoint ($\epsilon=0.2$, $\beta_{\text{KL}}=0.1$, 1 prompt/update, 2 PPO epochs). Peak VRAM 6.67\,GiB, wall-clock 361\,s on one T4.}
 \label{fig:ppo}
 \end{figure}
@@ -120,15 +126,15 @@ Study & Condition & cached clip & cached affected & max update KL & RM & $\Delta
 \end{tabular}}
 \end{table}
 
-\textbf{Clipping (RQ1).} The two halves of Table~\ref{tab:ppo} answer different questions. On the fixed cached batch, $\epsilon$ sets how much of a batch is constrained: 15.4\% of tokens fall outside the band at $\epsilon=0.05$ against 2.1\% at 0.5, and about half of those have their gradient zeroed (the min selects the clipped branch only when the advantage sign pushes the ratio further out). This is pure geometry: the cached old policy sits at a fixed approx-KL of 0.107 from the midpoint, and four inner steps at this learning rate do not change the fractions. In the matched forks, however, the policy never moves far enough for that geometry to act: the largest ratio deviation is 2.8\% and the largest update KL $7.8\cdot10^{-6}$, so no token is clipped even at $\epsilon=0.05$ and the three forks are \emph{bit-identical}. Clipping can only stabilise updates that would otherwise exceed the band; at this step size there are none, so $\epsilon$ has no effect on stability.
+\textbf{Clipping (RQ1).} The two halves of Table~\ref{tab:ppo} answer different questions. On the fixed cached batch, $\epsilon$ sets how much of a batch is constrained: 15.4\% of tokens fall outside the band at $\epsilon=0.05$ against 2.1\% at 0.5, and about half of those have their gradient zeroed (the min selects the clipped branch only when the advantage sign pushes the ratio further out). This is pure geometry: the cached old policy sits at a fixed approx-KL of 0.107 from the midpoint, and four inner steps at this learning rate do not change the fractions (Figure~\ref{fig:app_ppo}). In the matched forks, however, the policy never moves far enough for that geometry to act: the largest ratio deviation is 2.8\% and the largest update KL $7.8\cdot10^{-6}$, so no token is clipped even at $\epsilon=0.05$ and the three forks are \emph{bit-identical}. Clipping can only stabilise updates that would otherwise exceed the band; at this step size there are none, so $\epsilon$ has no effect on stability.
 
-\textbf{KL pressure (RQ2) and over-optimization (RQ3).} Weakening KL pressure produces no measurable drift (Table~\ref{tab:ppo}): every held-out difference lies inside its CI and the logged KL stays at the $10^{-4}$ noise floor. This is consistent with the clipping result --- the penalty $\beta_{\text{KL}}(\log\pi_\theta-\log\pi_{\text{ref}})$ is a per-token cost of order $\beta_{\text{KL}}\cdot10^{-4}$, negligible next to terminal rewards of order 1, so removing it changes almost nothing over 8 updates. The first observable divergence is in individual responses and lengths ($\beta_{\text{KL}}=0$ and 0.2 average 293 tokens vs.\ 311), not in aggregate reward, KL or entropy. We find no evidence of reward over-optimization, because the policy barely leaves the reference and over-optimization appears only as KL grows~\cite{gao2023scaling}. The learned reward is nonetheless unreliable \emph{at} the reference. Reward and quality move together on a role-play request, where the midpoint refuses (``I'm sorry, but I can't fulfill that request'', RM $-0.12$) and the continuation answers substantively (1.56). They disagree on \emph{South Dakota v.\ Wayfair}, where the midpoint states the ruling backwards (``states could no longer require out-of-state retailers to collect sales tax'') yet scores 3.34 against 0.17 for the continuation's refusal, and on a Gujarati$\rightarrow$Oriya translation answered partly in Malayalam and cut off at 768 tokens (2.75). The RM rewards fluent, confident form over correctness, so in a longer run a reward increase could not be read as a quality increase without held-out checks such as Task~4.
+\textbf{KL pressure (RQ2) and over-optimization (RQ3).} Weakening KL pressure produces no measurable drift (Table~\ref{tab:ppo}): every held-out difference lies inside its CI and the logged KL (trajectories in Figure~\ref{fig:app_ppo}) stays at the $10^{-4}$ noise floor. This is consistent with the clipping result --- the penalty $\beta_{\text{KL}}(\log\pi_\theta-\log\pi_{\text{ref}})$ is a per-token cost of order $\beta_{\text{KL}}\cdot10^{-4}$, negligible next to terminal rewards of order 1, so removing it changes almost nothing over 8 updates. The first observable divergence is in individual responses and lengths ($\beta_{\text{KL}}=0$ and 0.2 average 293 tokens vs.\ 311), not in aggregate reward, KL or entropy. We find no evidence of reward over-optimization, because the policy barely leaves the reference and over-optimization appears only as KL grows~\cite{gao2023scaling}. The learned reward is nonetheless unreliable \emph{at} the reference. Reward and quality move together on a role-play request, where the midpoint refuses (``I'm sorry, but I can't fulfill that request'', RM $-0.12$) and the continuation answers substantively (1.56). They disagree on \emph{South Dakota v.\ Wayfair}, where the midpoint states the ruling backwards (``states could no longer require out-of-state retailers to collect sales tax'') yet scores 3.34 against 0.17 for the continuation's refusal, and on a Gujarati$\rightarrow$Oriya translation answered partly in Malayalam and cut off at 768 tokens (2.75). The RM rewards fluent, confident form over correctness, so in a longer run a reward increase could not be read as a quality increase without held-out checks such as Task~4.
 
 % ====================================================================================
 \section{Task 3 --- Group Relative Policy Optimization}
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.93\linewidth]{figures/t3_grpo_standard.pdf}
+\includegraphics[width=\linewidth]{figures/t3_grpo_standard.pdf}
 \caption{Standard 20-update GRPO continuation ($K=4$, 1 prompt/update, max-length completions masked). Peak VRAM 8.04\,GiB, wall-clock 516\,s on one T4.}
 \label{fig:grpo}
 \end{figure}
@@ -162,11 +168,11 @@ $K$ & bin (groups) & informative & weak (s.d.$<$0.1) & mean group s.d. & Var$(r-
 \end{tabular}}
 \end{table}
 
-\textbf{Group size (RQ1).} Comparing at equal generations (Table~\ref{tab:k}), the informative-group rate is \emph{not} the binding constraint under a continuous reward: almost every group has non-zero variance at any $K$. What $K$ changes is the \emph{quality} of the relative signal. A group's mean is a noisy baseline estimate, and its sampling error shrinks as $1/\sqrt{K}$: weak groups fall from 26\% to 4\%, the within-group s.d.\ approaches the prompt's true spread (0.39$\rightarrow$0.62), and the correlation of a group's advantages with the full 8-sample advantages rises from 0.62 to 0.88. Medium and easy prompts benefit most (weak groups vanish at $K{=}8$); hard prompts keep 12.5\% weak groups because one hard prompt's completions all receive nearly the same reward. The binarized column shows the regime the manual warns about: with a pass/fail reward, a group is informative only if it contains both outcomes, with probability $1-p^K-(1-p)^K$, which is zero for prompts where every completion fails (all hard prompts) and grows steeply with $K$ for medium prompts (0.41$\rightarrow$1.00) --- the low-resolution setting, typical of verifiable rewards~\cite{deepseek2025r1}, where larger $K$ is worth its generation cost.
+\textbf{Group size (RQ1).} Comparing at equal generations (Table~\ref{tab:k}, Figure~\ref{fig:app_k}), the informative-group rate is \emph{not} the binding constraint under a continuous reward: almost every group has non-zero variance at any $K$. What $K$ changes is the \emph{quality} of the relative signal. A group's mean is a noisy baseline estimate, and its sampling error shrinks as $1/\sqrt{K}$: weak groups fall from 26\% to 4\%, the within-group s.d.\ approaches the prompt's true spread (0.39$\rightarrow$0.62), and the correlation of a group's advantages with the full 8-sample advantages rises from 0.62 to 0.88. Medium and easy prompts benefit most (weak groups vanish at $K{=}8$); hard prompts keep 12.5\% weak groups because one hard prompt's completions all receive nearly the same reward. The binarized column shows the regime the manual warns about: with a pass/fail reward, a group is informative only if it contains both outcomes, with probability $1-p^K-(1-p)^K$, which is zero for prompts where every completion fails (all hard prompts) and grows steeply with $K$ for medium prompts (0.41$\rightarrow$1.00) --- the low-resolution setting, typical of verifiable rewards~\cite{deepseek2025r1}, where larger $K$ is worth its generation cost.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.5\linewidth]{figures/t3_norm_grad_share.pdf}
+\includegraphics[width=0.49\linewidth]{figures/t3_norm_grad_share.pdf}
 \caption{Share of total per-completion gradient norm by length tercile, measured at the GRPO midpoint on identical cached completions.}
 \label{fig:norm}
 \end{figure}
@@ -215,7 +221,7 @@ real\_group\_nons\_discr & 0.08 & 0.08 & 0.08 & 0.08 & & & & & \\
 \end{tabular}}
 \end{table}
 
-\textbf{Calibration.} By the spec metrics (Table~\ref{tab:safety}, left) all four policies look well calibrated: no unsafe compliance, no over-refusal, $\sim$88\% justified refusal. The category view (Table~\ref{tab:cat}) shows why this is misleading. On \emph{safe} categories the judge labels 8--80\% of responses \textsc{justified\_refusal}, i.e.\ it accepts a refusal of a benign prompt as justified, which it can only do by judging the prompt harmful; it never uses \textsc{over\_refusal}. The judge-independent columns agree that the refusals are real: 37\% of safe-prompt responses contain explicit refusal phrases. Refusals concentrate where benign prompts reuse harmful vocabulary --- safe contexts (``blow up a fake hospital in a film''), fictional privacy (James Bond's social-security number, refused as a ``political matter''), historical events --- and are rare for neutral definitions and nonsense groups. Policies differ by at most 4 points per metric, so the trade-off between unsafe refusal and safe over-refusal is set by the shared SFT base, not by any optimizer.
+\textbf{Calibration.} By the spec metrics (Table~\ref{tab:safety}, left) all four policies look well calibrated: no unsafe compliance, no over-refusal, $\sim$88\% justified refusal. The category view (Table~\ref{tab:cat}; label shares in Figure~\ref{fig:app_safety}) shows why this is misleading. On \emph{safe} categories the judge labels 8--80\% of responses \textsc{justified\_refusal}, i.e.\ it accepts a refusal of a benign prompt as justified, which it can only do by judging the prompt harmful; it never uses \textsc{over\_refusal}. The judge-independent columns agree that the refusals are real: 37\% of safe-prompt responses contain explicit refusal phrases. Refusals concentrate where benign prompts reuse harmful vocabulary --- safe contexts (``blow up a fake hospital in a film''), fictional privacy (James Bond's social-security number, refused as a ``political matter''), historical events --- and are rare for neutral definitions and nonsense groups. Policies differ by at most 4 points per metric, so the trade-off between unsafe refusal and safe over-refusal is set by the shared SFT base, not by any optimizer.
 
 \begin{table}[t]
 \centering\small
@@ -283,7 +289,7 @@ persuasive\_filler\_correct & style & 0.00 / 0.00 & 1.00 / 0.75 & 0.00 / 0.25 & 
 \end{tabular}}
 \end{table}
 
-\textbf{Controlled diagnostics (RQ1--3).} Table~\ref{tab:diag} separates what each mechanism can and cannot detect. \emph{Outcome sensitivity:} the verifier prefers the correct final answer in every outcome-changing pair ($S_{\text{outcome}}=1$), including the distractor variant that mentions the gold number and then rejects it, so its parser correctly ignores discarded intermediate candidates; the judge detects a wrong final answer only 25\% of the time and otherwise ties. \emph{Reasoning sensitivity:} both tie on every reasoning-only corruption ($S_{\text{reason}}=0$). For the verifier this invariance is by design; for the judge it shows it is not checking arithmetic, so a high reasoning-sensitivity score could not have been trusted anyway. \emph{Style:} the verifier correctly ties the filler variant, but the judge \emph{prefers} it in 25\% of pairs and, under the RLAIF group reward used in training, the filler variant receives the highest reward of all five (0.588 vs.\ 0.494 for the clean answer). The judge's verdict also flips with presentation order in 11\% of pairs, the position bias documented for LLM judges~\cite{zheng2023judging}. So the judge's extra flexibility (RQ1) appears here only as a preference for style and confident framing, not as sensitivity to reasoning quality (RQ2). The verifier is vulnerable to \emph{specification} --- a correct \texttt{\textbackslash boxed\{\$1170\}} answer scores 0 --- and the judge to \emph{bias} --- verbosity, persuasion and order (RQ3).
+\textbf{Controlled diagnostics (RQ1--3).} Table~\ref{tab:diag} (plotted in Figure~\ref{fig:app_safety}) separates what each mechanism can and cannot detect. \emph{Outcome sensitivity:} the verifier prefers the correct final answer in every outcome-changing pair ($S_{\text{outcome}}=1$), including the distractor variant that mentions the gold number and then rejects it, so its parser correctly ignores discarded intermediate candidates; the judge detects a wrong final answer only 25\% of the time and otherwise ties. \emph{Reasoning sensitivity:} both tie on every reasoning-only corruption ($S_{\text{reason}}=0$). For the verifier this invariance is by design; for the judge it shows it is not checking arithmetic, so a high reasoning-sensitivity score could not have been trusted anyway. \emph{Style:} the verifier correctly ties the filler variant, but the judge \emph{prefers} it in 25\% of pairs and, under the RLAIF group reward used in training, the filler variant receives the highest reward of all five (0.588 vs.\ 0.494 for the clean answer). The judge's verdict also flips with presentation order in 11\% of pairs, the position bias documented for LLM judges~\cite{zheng2023judging}. So the judge's extra flexibility (RQ1) appears here only as a preference for style and confident framing, not as sensitivity to reasoning quality (RQ2). The verifier is vulnerable to \emph{specification} --- a correct \texttt{\textbackslash boxed\{\$1170\}} answer scores 0 --- and the judge to \emph{bias} --- verbosity, persuasion and order (RQ3).
 
 \textbf{Feedback-source comparison.} AI feedback replaces human labels with model judgements~\cite{bai2022constitutional,lee2024rlaif}, verifiable rewards replace them with a checker~\cite{deepseek2025r1}. \emph{Coverage:} the verifier scores only responses with a parseable \texttt{\#\#\#\# N} (35--36\% on GSM8K), while the judge accepts any pair but ties on 286/300. \emph{Noise:} the verifier is deterministic; the judge flips with presentation order on 11\% of pairs. \emph{Exploitability:} the verifier rewards a guessed number in the right format and is blind to reasoning; the judge rewards persuasive filler and misses 75\% of wrong final answers. \emph{Cost:} a $K{=}4$ group reward takes 0.005\,ms with the verifier versus 2.48\,s (6 judge generations on a T4), a $\sim\!5\times10^5$ ratio. The verifier is exact, cheap and order-free but narrow and brittle to format; the judge is broad in principle but mostly abstains, is order-sensitive and rewards style.
 
@@ -308,26 +314,99 @@ Correcting three objective defects was necessary for any of these comparisons to
 
 \normalsize
 \appendix
-\section{Additional figures}
-Figures below visualise quantities already reported in the main-text tables.
+\section{Implementation and validation}
+\label{app:impl}
+
+\subsection{Corrected objective defects}
+Each of Tasks 1--3 shipped with one deliberate defect in its core objective. Table~\ref{tab:bugs} lists the defect, the correction, and the unit test (\texttt{tests/test\_objectives.py}) that fails on the released code and passes on ours. A further test checks that our micro-batched GRPO step reproduces the released full-batch loss and gradients exactly, for both normalisations.
+
+\begin{table}[h]
+\centering\small
+\caption{Objective defects in the released code and their validation.}
+\label{tab:bugs}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lp{4.2cm}p{3.0cm}p{4.6cm}}
+\toprule
+Task & Released code & Correction & Test evidence \\
+\midrule
+DPO & logit $\beta(\Delta_\pi+\Delta_{\text{ref}})$ & $\beta(\Delta_\pi-\Delta_{\text{ref}})$ & With $\pi_\theta{=}\pi_{\text{ref}}$ the loss must equal $\log 2$ for any reference margin; first logged training loss 0.6942. \\
+PPO & $\max(\rho A,\operatorname{clip}(\rho)A)$ (optimistic bound; no trust region) & $\min(\cdot,\cdot)$ & Per-token values on hand-built ratios; clipped tokens with $A{>}0$ receive zero gradient. \\
+GRPO & rewards standardised over the whole batch, ignoring \texttt{group\_ids} & per-prompt $(r-\mu_g)/(\sigma_g+\varepsilon)$ & Zero-mean per group; zero-s.d.\ groups get zero advantage; an easy prompt no longer dominates. \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\subsection{DPO sequence-length handling}
+Table~\ref{tab:trunc} quantifies the preprocessing described in Section~\ref{sec:protocol}. Truncation is concentrated in the standard splits, where it affects the chosen response more often than the rejected one; Section~\ref{sec:dpo} discusses why it cannot produce the observed length effect.
+
+\begin{table}[h]
+\centering\small
+\caption{Filtering (prompt leaves $<$32 response tokens) and response truncation (prompt + response $>$ 768 tokens) per DPO split.}
+\label{tab:trunc}
+\begin{tabular}{lcccc}
+\toprule
+Split & filtered & pairs with a truncated response & chosen truncated & rejected truncated \\
+\midrule
+Standard train (1500) & 56 (3.7\%) & 230 (15.9\%) & 171 & 131 \\
+Standard held-out (300) & 10 (3.3\%) & 50 (17.2\%) & 36 & 31 \\
+Length-balanced train (1500) & 62 (4.1\%) & 38 (2.6\%) & 28 & 29 \\
+Length-stratified held-out (246) & 9 (3.7\%) & 7 (3.0\%) & 4 & 6 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Batched versus released safety judge}
+To rule out that batching changes the Task 4 conclusions, we re-judged all 110 distinct audited responses with the released unbatched \texttt{judge\_one}. 109/110 labels match the batched labels; the unbatched judge also never emits \textsc{over\_refusal}, and labels 15 of the 16 manually identified over-refusals \textsc{justified\_refusal}. The single mismatch is a borderline response that the batched judge had already labelled inconsistently across batches, while 447 of 448 responses that were duplicated across policies received identical labels in different batches.
+
+\subsection{Reproducibility and assistance}
+All numbers are produced by \texttt{bash scripts/run\_all.sh} (stages \texttt{t1}--\texttt{t5}); \texttt{python -m report.make\_figures} regenerates every figure and the numbers digest, and \texttt{python -m report.qualitative} extracts the quoted examples deterministically. A CPU smoke test (\texttt{tests/smoke}) runs every pipeline end to end with tiny fp16 models. % TODO: adjust the next sentence to your course's AI-use policy.
+Implementation and drafting were assisted by an AI coding assistant (Claude, Anthropic); all experiments, the manual safety audit and the final text were run, labelled and reviewed by the author.
+
+\section{Additional results}
+\label{app:results}
+These figures visualise quantities summarised in the main-text tables; each paragraph states what the figure adds.
+
+\subsection{DPO training dynamics}
+Figure~\ref{fig:app_dpo} (top) restates Table~\ref{tab:dpo} visually: accuracy is flat across conditions while KL is an order of magnitude larger only for the length-balanced model. The training curves (bottom) start at the theoretical $\log 2\approx0.693$, confirming the corrected objective, and show both implicit rewards $\beta\log(\pi_\theta/\pi_{\text{ref}})$ decreasing, with $y^-$ falling faster: the likelihood displacement used to explain the length effect in Section~\ref{sec:dpo}. The last point of each run averages only the leftover pairs and is therefore noisier.
+
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\linewidth]{figures/t1_dpo_summary.pdf}\\[2pt]
-\includegraphics[width=0.9\linewidth]{figures/t1_train_curves.pdf}
-\caption{Top: Task 1 summary metrics (Table~\ref{tab:dpo}). Bottom: DPO training curves per optimizer step (the last point of each run averages only the leftover pairs).}
-\end{figure}
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\linewidth]{figures/t2_clip_cached.pdf}\\[2pt]
-\includegraphics[width=0.9\linewidth]{figures/t2_kl_forks.pdf}\\[2pt]
-\includegraphics[width=0.9\linewidth]{figures/t3_group_size.pdf}\\[2pt]
-\includegraphics[width=0.49\linewidth]{figures/t4_safety_labels.pdf}\hfill
-\includegraphics[width=0.49\linewidth]{figures/t5_diagnostics.pdf}
-\caption{Cached-batch clipping geometry per $\epsilon$; KL-pressure fork trajectories; group-size study by difficulty bin; AI-judge label shares on safe/unsafe prompts; Task 5 controlled diagnostics.}
+\includegraphics[width=\linewidth]{figures/t1_dpo_summary.pdf}\\[2pt]
+\includegraphics[width=\linewidth]{figures/t1_train_curves.pdf}
+\caption{Task 1. Top: held-out accuracy, KL, RM score and length per condition (Std = standard one-epoch run, LenBal = length-balanced). Bottom: per-step training loss, training accuracy and implicit rewards of $y^+$ and $y^-$.}
+\label{fig:app_dpo}
 \end{figure}
 
-\section{Reproducibility and assistance}
-All numbers are produced by \texttt{bash scripts/run\_all.sh} (stages \texttt{t1}--\texttt{t5}) and summarised by \texttt{python -m report.make\_figures} into \texttt{report/tables.md}; qualitative examples are extracted deterministically by \texttt{python -m report.qualitative}. % TODO: adjust the next sentence to your course's AI-use policy.
-Implementation and drafting were assisted by an AI coding assistant (Claude, Anthropic); all experiments, the manual safety audit and the final text were run, labelled and reviewed by the author.
+\subsection{PPO clipping geometry and KL-pressure trajectories}
+Figure~\ref{fig:app_ppo} (top) shows that the cached-batch clip and affected fractions are ordered by $\epsilon$ and stay flat over four inner steps, because the cached old policy sits at a fixed approx-KL of $\approx0.107$ from the midpoint and steps at lr $3\cdot10^{-6}$ barely move it. The KL-pressure trajectories (bottom) overlap in reward, KL, entropy and length throughout the 8 updates, supporting the conclusion that weakening KL pressure produces no measurable drift at this budget.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{figures/t2_clip_cached.pdf}\\[2pt]
+\includegraphics[width=\linewidth]{figures/t2_kl_forks.pdf}
+\caption{Task 2. Top: clip fraction, affected fraction and approx-KL on the cached batch per inner step. Bottom: training trajectories of the three $\beta_{\text{KL}}$ forks.}
+\label{fig:app_ppo}
+\end{figure}
+
+\subsection{GRPO group size by difficulty}
+Figure~\ref{fig:app_k} plots the per-bin columns of Table~\ref{tab:k}. Weak groups vanish with $K$ for medium and easy prompts but not for hard ones; advantage agreement with the $K{=}8$ baseline rises similarly in every bin; and under a binarised reward only medium prompts become reliably informative as $K$ grows.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{figures/t3_group_size.pdf}
+\caption{Task 3 group-size study by prompt-difficulty tercile, at equal total generations.}
+\label{fig:app_k}
+\end{figure}
+
+\subsection{Safety judge label shares and controlled diagnostics}
+Figure~\ref{fig:app_safety} (top) shows that the judge uses only two labels on both prompt classes, so every refusal of a benign prompt is booked as \textsc{justified\_refusal}; the policies are indistinguishable. The bottom panel plots Table~\ref{tab:diag}: the verifier is decisive exactly on outcome-changing pairs and ties elsewhere, while the judge mostly ties and prefers persuasive filler in a quarter of pairs.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{figures/t4_safety_labels.pdf}\\[2pt]
+\includegraphics[width=\linewidth]{figures/t5_diagnostics.pdf}
+\caption{Top: AI-judge label shares on safe and unsafe XSTest prompts per policy (Task 4). Bottom: better/tie/wrong rates per controlled perturbation for RLVR and RLAIF (Task 5).}
+\label{fig:app_safety}
+\end{figure}
 
 \end{document}
