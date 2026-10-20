@@ -1,0 +1,248 @@
+{
+  "task1": {
+    "per_token_normalized_strata_accuracy_standard": {
+      "rejected_longer": 0.481,
+      "preferred_longer": 0.705,
+      "length_matched": 0.588
+    },
+    "per_token_normalized_strata_accuracy_length_balanced": {
+      "rejected_longer": 0.582,
+      "preferred_longer": 0.705,
+      "length_matched": 0.613
+    }
+  },
+  "task3": {
+    "standard_truncated_completions": "28/80",
+    "standard_truncated_token_share": 0.558,
+    "standard_reward_truncated_vs_complete": [
+      1.083,
+      1.604
+    ],
+    "zero_gradient_updates": [
+      1,
+      7,
+      9
+    ],
+    "largest_grad_norm_update": [
+      2.078895092010498,
+      8,
+      14.5
+    ],
+    "update2_rewards": [
+      2.62,
+      2.44,
+      2.54,
+      2.57
+    ],
+    "update2_reward_span": 0.17,
+    "update2_advantages": [
+      1.17,
+      -1.56,
+      -0.07,
+      0.46
+    ],
+    "update14_rewards": [
+      -2.09,
+      0.56,
+      1.82,
+      -0.47
+    ],
+    "update14_reward_span": 3.91,
+    "update14_advantages": [
+      -1.43,
+      0.42,
+      1.3,
+      -0.3
+    ],
+    "grad_share_by_length_third_grpo": [
+      0.715,
+      0.16,
+      0.125
+    ],
+    "grad_share_by_length_third_dr_grpo": [
+      0.128,
+      0.319,
+      0.553
+    ],
+    "unnormalized_grad_norm_exponent": 0.43,
+    "top6_grpo_completions_tokens": [
+      13,
+      8,
+      11,
+      8,
+      10,
+      15
+    ],
+    "top6_grpo_grad_share": 0.404,
+    "capped_completions_in_measurement": 17,
+    "dr_grpo_grad_share_of_capped": 0.35,
+    "dr_grpo_long_third_share_without_capped": 0.313,
+    "dr_over_grpo_equals_T_over_512": true,
+    "fork_grpo_masked": 11,
+    "fork_dr_grpo_masked": 12,
+    "binarized_hard_pass_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "binarized_hard_exact_informative": {
+      "2": 0.0,
+      "4": 0.0,
+      "8": 0.0
+    },
+    "binarized_medium_pass_counts": [
+      1,
+      4,
+      3,
+      4,
+      7,
+      6,
+      6,
+      7
+    ],
+    "binarized_medium_exact_informative": {
+      "2": 0.411,
+      "4": 0.743,
+      "8": 1.0
+    },
+    "binarized_easy_pass_counts": [
+      5,
+      6,
+      8,
+      8,
+      8,
+      8,
+      8,
+      7
+    ],
+    "binarized_easy_exact_informative": {
+      "2": 0.152,
+      "4": 0.277,
+      "8": 0.375
+    },
+    "variance_ratio_vs_k8": {
+      "K2": 0.576,
+      "K4": 0.862,
+      "predicted_K2": 0.571,
+      "predicted_K4": 0.857
+    }
+  },
+  "task4": {
+    "rationale_tags_describing_request": 0.584,
+    "judge_confidence_counts": {
+      "1.0": 1799,
+      "0.95": 1
+    },
+    "safe_prompts_judge_label_x_refusal_phrase": {
+      "JUSTIFIED_REFUSAL|phrase=False": 95,
+      "SAFE_ANSWER|phrase=False": 520,
+      "SAFE_ANSWER|phrase=True": 55,
+      "JUSTIFIED_REFUSAL|phrase=True": 319,
+      "UNSAFE_COMPLIANCE|phrase=False": 11
+    },
+    "dpo_identical_responses_to_sft": 170,
+    "dpo_label_changes_vs_sft": 35,
+    "ppo_identical_responses_to_sft": 376,
+    "ppo_label_changes_vs_sft": 8,
+    "grpo_identical_responses_to_sft": 377,
+    "grpo_label_changes_vs_sft": 4,
+    "dpo_vs_sft_safe_refusal_flips": {
+      "only_dpo_refuses": 12,
+      "only_sft_refuses": 7
+    },
+    "unsafe_prompts_labelled_safe_answer": {
+      "total": 96,
+      "contrast_discr": 45
+    },
+    "unsafe_compliance_labels_by_class": {
+      "SAFE": 11
+    },
+    "refusals_missed_by_phrase_list_per_policy": {
+      "sft": 6,
+      "dpo": 6,
+      "ppo": 6,
+      "grpo": 6
+    },
+    "audit_safe_agreement_kappa": [
+      0.508,
+      0.255
+    ],
+    "audit_unsafe_agreement_kappa": [
+      0.85,
+      -0.038
+    ],
+    "audit_overall_agreement_kappa": [
+      0.679,
+      0.446
+    ],
+    "audit_answers_judged_refusal": {
+      "total": 18,
+      "open_with_disclaimer": 6,
+      "contain_refusal_phrase": 4
+    }
+  },
+  "task5": {
+    "gsm_sft_last_number_accuracy": 0.66,
+    "gsm_sft_failures": 215,
+    "gsm_sft_unformatted": 195,
+    "gsm_sft_unformatted_but_last_number_correct": 113,
+    "gsm_sft_unformatted_breakdown": {
+      "no marker": 126,
+      "no marker + boxed": 34,
+      "marker": 32,
+      "marker + boxed": 3
+    },
+    "gsm_rlvr_last_number_accuracy": 0.643,
+    "gsm_rlvr_failures": 214,
+    "gsm_rlvr_unformatted": 192,
+    "gsm_rlvr_unformatted_but_last_number_correct": 107,
+    "gsm_rlaif_last_number_accuracy": 0.66,
+    "gsm_rlaif_failures": 214,
+    "gsm_rlaif_unformatted": 192,
+    "gsm_rlaif_unformatted_but_last_number_correct": 112,
+    "gsm_rlvr_identical_to_sft": 235,
+    "gsm_rlvr_judge_decisive_on_identical_texts": 6,
+    "gsm_rlaif_identical_to_sft": 245,
+    "gsm_rlaif_judge_decisive_on_identical_texts": 6,
+    "gsm_judge_when_exactly_one_correct": {
+      "tie": 17,
+      "opposite": 2,
+      "agree": 1
+    },
+    "transfer_sft_last_number_accuracy": 0.79,
+    "transfer_sft_failures": 56,
+    "transfer_sft_unformatted": 43,
+    "transfer_sft_unformatted_but_last_number_correct": 35,
+    "transfer_sft_unformatted_breakdown": {
+      "no marker": 34,
+      "no marker + boxed": 6,
+      "marker": 3
+    },
+    "transfer_rlvr_last_number_accuracy": 0.79,
+    "transfer_rlvr_failures": 54,
+    "transfer_rlvr_unformatted": 41,
+    "transfer_rlvr_unformatted_but_last_number_correct": 33,
+    "transfer_rlaif_last_number_accuracy": 0.79,
+    "transfer_rlaif_failures": 56,
+    "transfer_rlaif_unformatted": 43,
+    "transfer_rlaif_unformatted_but_last_number_correct": 35,
+    "transfer_rlvr_identical_to_sft": 91,
+    "transfer_rlvr_judge_decisive_on_identical_texts": 19,
+    "transfer_rlaif_identical_to_sft": 92,
+    "transfer_rlaif_judge_decisive_on_identical_texts": 18,
+    "transfer_judge_when_exactly_one_correct": {
+      "tie": 4,
+      "agree": 2
+    },
+    "diagnostic_outcome_detections": 10,
+    "diagnostic_outcome_detections_order_consistent": 1,
+    "diagnostic_order_inconsistent_pairs": "9/80",
+    "judge_misses_wrong_final_if_both_orders_required": 0.975,
+    "cost_ratio_judge_over_verifier": 472000.0
+  }
+}

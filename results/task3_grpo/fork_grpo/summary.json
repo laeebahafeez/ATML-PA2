@@ -1,0 +1,15 @@
+{
+  "run_name": "fork_grpo",
+  "loss_type": "grpo",
+  "updates": 8,
+  "num_generations": 4,
+  "prompts_per_update": 1,
+  "clip_epsilon": 0.2,
+  "kl_beta": 0.1,
+  "max_completion_length": 512,
+  "seed": 6304,
+  "wall_clock_s": 150.89302583400058,
+  "peak_vram_gib": 8.03560209274292,
+  "gpu": "Tesla T4",
+  "adapter": "outputs/task3_grpo/fork_grpo"
+}

@@ -1,0 +1,76 @@
+{
+  "dataset": "transfer",
+  "n": 100,
+  "policies": {
+    "sft": {
+      "exact_accuracy": 0.44,
+      "format_compliance": 0.57,
+      "accuracy_given_format": 0.7719298245614035,
+      "truncation_rate": 0.0,
+      "response_tokens": {
+        "n": 100,
+        "mean": 163.96,
+        "std": 71.74579012039662,
+        "median": 143.0,
+        "iqr": 79.0
+      },
+      "accuracy_drop_from_gsm": -0.15666666666666668
+    },
+    "rlvr": {
+      "exact_accuracy": 0.46,
+      "format_compliance": 0.59,
+      "accuracy_given_format": 0.7796610169491526,
+      "truncation_rate": 0.0,
+      "response_tokens": {
+        "n": 100,
+        "mean": 164.07,
+        "std": 72.54050661526978,
+        "median": 140.0,
+        "iqr": 79.25
+      },
+      "pairwise_vs_sft": {
+        "n": 100,
+        "win_rate_vs_sft": 0.515,
+        "wins": 12,
+        "losses": 9,
+        "ties": 79,
+        "verifier_win_rate_vs_sft": 0.51,
+        "verifier_judge_agreement_all": 0.77,
+        "verifier_judge_agreement_when_verifier_decisive": 0.25,
+        "n_verifier_decisive": 4,
+        "judge_tie_rate_when_verifier_decisive": 0.75,
+        "judge_decisive_when_verifier_tie": 0.20833333333333334
+      },
+      "accuracy_drop_from_gsm": -0.17333333333333334,
+      "win_rate_drop_from_gsm": -0.011666666666666714
+    },
+    "rlaif": {
+      "exact_accuracy": 0.44,
+      "format_compliance": 0.57,
+      "accuracy_given_format": 0.7719298245614035,
+      "truncation_rate": 0.0,
+      "response_tokens": {
+        "n": 100,
+        "mean": 162.98,
+        "std": 70.5209160462341,
+        "median": 140.0,
+        "iqr": 79.25
+      },
+      "pairwise_vs_sft": {
+        "n": 100,
+        "win_rate_vs_sft": 0.525,
+        "wins": 13,
+        "losses": 8,
+        "ties": 79,
+        "verifier_win_rate_vs_sft": 0.5,
+        "verifier_judge_agreement_all": 0.79,
+        "verifier_judge_agreement_when_verifier_decisive": 0.5,
+        "n_verifier_decisive": 2,
+        "judge_tie_rate_when_verifier_decisive": 0.5,
+        "judge_decisive_when_verifier_tie": 0.20408163265306123
+      },
+      "accuracy_drop_from_gsm": -0.15333333333333332,
+      "win_rate_drop_from_gsm": -0.030000000000000027
+    }
+  }
+}

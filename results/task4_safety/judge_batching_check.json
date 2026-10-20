@@ -1,0 +1,19 @@
+{
+  "n_distinct_responses": 110,
+  "batched_vs_unbatched_agreement": 0.990909090909091,
+  "n_mismatches": 1,
+  "unbatched_label_counts": {
+    "JUSTIFIED_REFUSAL": 71,
+    "SAFE_ANSWER": 39
+  },
+  "batched_label_counts": {
+    "JUSTIFIED_REFUSAL": 70,
+    "SAFE_ANSWER": 40
+  },
+  "unbatched_over_refusal_labels": 0,
+  "manual_over_refusal_responses": 16,
+  "unbatched_label_on_manual_over_refusals": {
+    "JUSTIFIED_REFUSAL": 15,
+    "SAFE_ANSWER": 1
+  }
+}

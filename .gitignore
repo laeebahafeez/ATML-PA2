@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Caches
+.cache/
+hf_cache/
+.huggingface/
+wandb/
+
+# Student outputs
+outputs/
+
+# Downloaded course assets
+cached/*
+!cached/README.md
+checkpoints/*
+!checkpoints/README.md
+manifests/*
+!manifests/README.md
+data/*
+!data/README.md
+!data/word_limit_prompts.jsonl
+
+# Model weights (checkpoints/ is ignored above, except its README)
+*.pt
+*.pth
+*.safetensors
+
+# Misc
+*.zip
+.DS_Store
+
+# Local smoke-test scratch
+smoke_work*/

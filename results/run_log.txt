@@ -1,0 +1,613 @@
+
+>>> task1_dpo.train --config configs/dpo.yaml --run-name standard
+[dpo:standard] rows=1444 dropped=56 beta=0.1 trainable=1089536/1544803840
+[dpo:standard] step 5 seen 80 loss 0.6948 acc 0.250 gnorm 1.924 t 69s
+[dpo:standard] step 10 seen 160 loss 0.6889 acc 0.750 gnorm 2.076 t 149s
+[dpo:standard] step 15 seen 240 loss 0.6921 acc 0.625 gnorm 1.559 t 219s
+[dpo:standard] step 20 seen 320 loss 0.6910 acc 0.562 gnorm 1.861 t 293s
+[dpo:standard] step 25 seen 400 loss 0.6923 acc 0.375 gnorm 1.740 t 367s
+[dpo:standard] step 30 seen 480 loss 0.6896 acc 0.625 gnorm 1.608 t 443s
+[dpo:standard] step 35 seen 560 loss 0.6872 acc 0.625 gnorm 1.903 t 520s
+[dpo:standard] step 40 seen 640 loss 0.6868 acc 0.625 gnorm 1.910 t 590s
+[dpo:standard] step 45 seen 720 loss 0.6823 acc 0.625 gnorm 1.910 t 663s
+[dpo:standard] step 50 seen 800 loss 0.6742 acc 0.688 gnorm 2.140 t 737s
+[dpo:standard] step 55 seen 880 loss 0.6757 acc 0.562 gnorm 2.147 t 813s
+[dpo:standard] step 60 seen 960 loss 0.6807 acc 0.750 gnorm 2.120 t 892s
+[dpo:standard] step 65 seen 1040 loss 0.6675 acc 0.750 gnorm 2.533 t 966s
+[dpo:standard] step 70 seen 1120 loss 0.6960 acc 0.625 gnorm 1.920 t 1044s
+[dpo:standard] step 75 seen 1200 loss 0.7070 acc 0.375 gnorm 2.189 t 1113s
+[dpo:standard] step 80 seen 1280 loss 0.6947 acc 0.688 gnorm 2.058 t 1194s
+[dpo:standard] step 85 seen 1360 loss 0.7004 acc 0.625 gnorm 2.012 t 1270s
+[dpo:standard] step 90 seen 1440 loss 0.6505 acc 0.750 gnorm 2.045 t 1343s
+[dpo:standard] step 91 seen 1444 loss 0.6730 acc 0.500 gnorm 0.923 t 1348s
+[dpo:standard] saved adapter -> /kaggle/working/pa2/outputs/task1_dpo/standard
+
+>>> task1_dpo.evaluate --config configs/dpo.yaml --adapter none --name sft
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+[dpo-eval:sft] {}
+[dpo-eval:sft] reward 0.934 KL 0.0000 len 171.8 word-limit 0.50
+
+>>> task1_dpo.evaluate --config configs/dpo.yaml --adapter outputs/task1_dpo/standard --name standard
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+[dpo-eval:standard] {'heldout_preference': {'n_pairs': 290, 'dpo_loss': 0.6756839555913005, 'preference_accuracy': 0.6379310344827587, 'mean_dpo_margin': 0.4014405808572111, 'mean_chosen_logratio': -0.4553584191305884, 'mean_rejected_logratio': -0.8567989994225831, 'n_dropped_overlong_prompts': 10}}
+[dpo-eval:standard] reward 1.034 KL 0.0002 len 174.8 word-limit 0.40
+
+>>> task1_dpo.ablate_beta --config configs/dpo.yaml
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+Required beta values: [0.03, 0.1, 0.3]
+Short-run examples per condition: 600
+[dpo:beta_0p03] rows=600 dropped=56 beta=0.03 trainable=1089536/1544803840
+[dpo:beta_0p03] step 5 seen 80 loss 0.6933 acc 0.625 gnorm 0.644 t 71s
+[dpo:beta_0p03] step 10 seen 160 loss 0.6929 acc 0.562 gnorm 0.607 t 146s
+[dpo:beta_0p03] step 15 seen 240 loss 0.6914 acc 0.688 gnorm 0.617 t 224s
+[dpo:beta_0p03] step 20 seen 320 loss 0.6924 acc 0.562 gnorm 0.623 t 298s
+[dpo:beta_0p03] step 25 seen 400 loss 0.6899 acc 0.688 gnorm 0.669 t 378s
+[dpo:beta_0p03] step 30 seen 480 loss 0.6903 acc 0.750 gnorm 0.569 t 449s
+[dpo:beta_0p03] step 35 seen 560 loss 0.6896 acc 0.812 gnorm 0.610 t 515s
+[dpo:beta_0p03] step 38 seen 600 loss 0.6906 acc 0.625 gnorm 0.504 t 554s
+[dpo:beta_0p03] saved adapter -> /kaggle/working/pa2/outputs/task1_dpo/beta_0p03
+[dpo-eval:beta_0p03] {'heldout_preference': {'n_pairs': 290, 'dpo_loss': 0.6909035584022258, 'preference_accuracy': 0.6344827586206897, 'mean_dpo_margin': 0.15382424664908442, 'mean_chosen_logratio': -0.24771632290092008, 'mean_rejected_logratio': -0.40154056965277113, 'n_dropped_overlong_prompts': 10}}
+[dpo-eval:beta_0p03] reward 0.974 KL 0.0002 len 172.2 word-limit 0.50
+[dpo:beta_0p1] rows=600 dropped=56 beta=0.1 trainable=1089536/1544803840
+[dpo:beta_0p1] step 5 seen 80 loss 0.6967 acc 0.312 gnorm 2.123 t 70s
+[dpo:beta_0p1] step 10 seen 160 loss 0.6901 acc 0.625 gnorm 1.996 t 145s
+[dpo:beta_0p1] step 15 seen 240 loss 0.6871 acc 0.562 gnorm 2.016 t 223s
+[dpo:beta_0p1] step 20 seen 320 loss 0.6893 acc 0.625 gnorm 2.032 t 298s
+[dpo:beta_0p1] step 25 seen 400 loss 0.6801 acc 0.625 gnorm 2.135 t 377s
+[dpo:beta_0p1] step 30 seen 480 loss 0.6838 acc 0.812 gnorm 1.845 t 449s
+[dpo:beta_0p1] step 35 seen 560 loss 0.6822 acc 0.750 gnorm 1.955 t 514s
+[dpo:beta_0p1] step 38 seen 600 loss 0.6799 acc 0.625 gnorm 1.602 t 554s
+[dpo:beta_0p1] saved adapter -> /kaggle/working/pa2/outputs/task1_dpo/beta_0p1
+[dpo-eval:beta_0p1] {'heldout_preference': {'n_pairs': 290, 'dpo_loss': 0.6859710826955993, 'preference_accuracy': 0.6310344827586207, 'mean_dpo_margin': 0.15672921877482843, 'mean_chosen_logratio': -0.23941448105756066, 'mean_rejected_logratio': -0.3961436997199881, 'n_dropped_overlong_prompts': 10}}
+[dpo-eval:beta_0p1] reward 0.995 KL 0.0002 len 170.7 word-limit 0.50
+[dpo:beta_0p3] rows=600 dropped=56 beta=0.3 trainable=1089536/1544803840
+[dpo:beta_0p3] step 5 seen 80 loss 0.6982 acc 0.312 gnorm 6.365 t 71s
+[dpo:beta_0p3] step 10 seen 160 loss 0.6917 acc 0.562 gnorm 5.980 t 147s
+[dpo:beta_0p3] step 15 seen 240 loss 0.6774 acc 0.688 gnorm 5.907 t 225s
+[dpo:beta_0p3] step 20 seen 320 loss 0.6821 acc 0.688 gnorm 6.095 t 300s
+[dpo:beta_0p3] step 25 seen 400 loss 0.6687 acc 0.750 gnorm 6.193 t 380s
+[dpo:beta_0p3] step 30 seen 480 loss 0.6633 acc 0.750 gnorm 5.363 t 452s
+[dpo:beta_0p3] step 35 seen 560 loss 0.6575 acc 0.812 gnorm 5.540 t 518s
+[dpo:beta_0p3] step 38 seen 600 loss 0.6666 acc 0.625 gnorm 4.703 t 558s
+[dpo:beta_0p3] saved adapter -> /kaggle/working/pa2/outputs/task1_dpo/beta_0p3
+[dpo-eval:beta_0p3] {'heldout_preference': {'n_pairs': 290, 'dpo_loss': 0.6740462589880516, 'preference_accuracy': 0.6241379310344828, 'mean_dpo_margin': 0.15610473880480075, 'mean_chosen_logratio': -0.17483177529005656, 'mean_rejected_logratio': -0.33093651399530216, 'n_dropped_overlong_prompts': 10}}
+[dpo-eval:beta_0p3] reward 1.045 KL 0.0001 len 173.4 word-limit 0.50
+
+beta | pref-acc | DPO loss | KL | reward | length
+0.03 | 0.634    | 0.6909  | 0.0002 | 0.974 | 172.2
+0.1  | 0.631    | 0.6860  | 0.0002 | 0.995 | 170.7
+0.3  | 0.624    | 0.6740  | 0.0001 | 1.045 | 173.4
+
+>>> task1_dpo.analyze_length --config configs/dpo.yaml
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+Length-balanced train rows: 1500
+Length-stratified eval rows: 246
+[dpo:length_balanced] rows=1438 dropped=62 beta=0.1 trainable=1089536/1544803840
+[dpo:length_balanced] step 5 seen 80 loss 0.6946 acc 0.438 gnorm 1.752 t 63s
+[dpo:length_balanced] step 10 seen 160 loss 0.6895 acc 0.625 gnorm 1.760 t 126s
+[dpo:length_balanced] step 15 seen 240 loss 0.6962 acc 0.438 gnorm 1.728 t 180s
+[dpo:length_balanced] step 20 seen 320 loss 0.6841 acc 0.625 gnorm 2.040 t 234s
+[dpo:length_balanced] step 25 seen 400 loss 0.6892 acc 0.500 gnorm 1.771 t 298s
+[dpo:length_balanced] step 30 seen 480 loss 0.6828 acc 0.812 gnorm 1.871 t 351s
+[dpo:length_balanced] step 35 seen 560 loss 0.6971 acc 0.500 gnorm 1.808 t 404s
+[dpo:length_balanced] step 40 seen 640 loss 0.6885 acc 0.625 gnorm 1.699 t 467s
+[dpo:length_balanced] step 45 seen 720 loss 0.6838 acc 0.625 gnorm 2.199 t 530s
+[dpo:length_balanced] step 50 seen 800 loss 0.6836 acc 0.688 gnorm 1.684 t 585s
+[dpo:length_balanced] step 55 seen 880 loss 0.6623 acc 0.938 gnorm 2.348 t 643s
+[dpo:length_balanced] step 60 seen 960 loss 0.6711 acc 0.750 gnorm 2.178 t 702s
+[dpo:length_balanced] step 65 seen 1040 loss 0.6762 acc 0.500 gnorm 1.910 t 758s
+[dpo:length_balanced] step 70 seen 1120 loss 0.6899 acc 0.625 gnorm 2.044 t 813s
+[dpo:length_balanced] step 75 seen 1200 loss 0.6757 acc 0.438 gnorm 1.649 t 866s
+[dpo:length_balanced] step 80 seen 1280 loss 0.6630 acc 0.562 gnorm 1.728 t 924s
+[dpo:length_balanced] step 85 seen 1360 loss 0.6275 acc 0.625 gnorm 2.535 t 980s
+[dpo:length_balanced] step 90 seen 1438 loss 0.6606 acc 0.643 gnorm 1.760 t 1035s
+[dpo:length_balanced] saved adapter -> /kaggle/working/pa2/outputs/task1_dpo/length_balanced
+[dpo-eval:length_balanced] {'heldout_preference': {'n_pairs': 290, 'dpo_loss': 0.6748524401722283, 'preference_accuracy': 0.6137931034482759, 'mean_dpo_margin': 0.5021567430989495, 'mean_chosen_logratio': -1.3609040604262002, 'mean_rejected_logratio': -1.8630608023754482, 'n_dropped_overlong_prompts': 10}}
+[dpo-eval:length_balanced] reward 1.083 KL 0.0026 len 171.4 word-limit 0.40
+
+stratum           | standard acc | balanced acc
+preferred_longer  | 0.474        | 0.423
+length_matched    | 0.575        | 0.588
+rejected_longer   | 0.696        | 0.759
+sft              len 171.8±95.3 word-limit 0.50
+standard         len 174.8±95.6 word-limit 0.40
+length_balanced  len 171.4±95.0 word-limit 0.40
+
+>>> task2_ppo.continue_train --config configs/ppo.yaml --run-name standard
+[ppo:standard] updates=20 eps=0.2 kl_beta=0.1 epochs=2
+[ppo:standard] 1/20 R 0.521 KL -0.0000 H 1.264 len 512 clip 0.000 pl -0.0001 vl 2.0980 gn 0.219 t 28s
+[ppo:standard] 2/20 R 2.125 KL -0.0005 H 1.075 len 306 clip 0.000 pl -0.0001 vl 2.2233 gn 0.280 t 44s
+[ppo:standard] 3/20 R 2.029 KL -0.0002 H 0.975 len 46 clip 0.000 pl -0.0008 vl 2.4790 gn 0.870 t 48s
+[ppo:standard] 4/20 R 2.156 KL 0.0008 H 0.912 len 83 clip 0.000 pl -0.0001 vl 2.9961 gn 0.604 t 53s
+[ppo:standard] 5/20 R 2.301 KL 0.0001 H 0.469 len 512 clip 0.000 pl 0.0002 vl 2.5411 gn 0.174 t 81s
+[ppo:standard] 6/20 R 0.294 KL -0.0008 H 1.294 len 42 clip 0.000 pl -0.0001 vl 3.1318 gn 0.972 t 85s
+[ppo:standard] 7/20 R 0.328 KL -0.0001 H 1.334 len 512 clip 0.000 pl 0.0001 vl 2.6350 gn 0.241 t 112s
+[ppo:standard] 8/20 R 1.731 KL -0.0008 H 0.287 len 15 clip 0.000 pl 0.0002 vl 3.4363 gn 1.429 t 114s
+[ppo:standard] 9/20 R 0.619 KL 0.0001 H 0.655 len 512 clip 0.000 pl 0.0000 vl 2.2834 gn 0.220 t 142s
+[ppo:standard] 10/20 R 1.194 KL -0.0001 H 1.021 len 512 clip 0.000 pl 0.0001 vl 1.2442 gn 0.209 t 170s
+[ppo:standard] 11/20 R 3.398 KL 0.0001 H 0.930 len 328 clip 0.000 pl -0.0002 vl 1.5971 gn 0.240 t 188s
+[ppo:standard] 12/20 R 3.387 KL 0.0004 H 1.392 len 175 clip 0.000 pl -0.0002 vl 1.2271 gn 0.396 t 199s
+[ppo:standard] 13/20 R 1.746 KL 0.0004 H 1.401 len 512 clip 0.000 pl 0.0001 vl 1.0350 gn 0.192 t 227s
+[ppo:standard] 14/20 R 1.067 KL -0.0003 H 1.515 len 512 clip 0.000 pl -0.0000 vl 1.3403 gn 0.225 t 255s
+[ppo:standard] 15/20 R 1.478 KL -0.0005 H 1.191 len 512 clip 0.000 pl -0.0001 vl 1.1998 gn 0.245 t 283s
+[ppo:standard] 16/20 R 3.314 KL -0.0001 H 1.432 len 214 clip 0.000 pl 0.0002 vl 1.0823 gn 0.382 t 295s
+[ppo:standard] 17/20 R 2.512 KL -0.0003 H 1.039 len 479 clip 0.000 pl -0.0001 vl 1.4896 gn 0.245 t 322s
+[ppo:standard] 18/20 R -2.104 KL 0.0019 H 2.274 len 46 clip 0.000 pl 0.0006 vl 1.7783 gn 0.627 t 325s
+[ppo:standard] 19/20 R 0.822 KL -0.0001 H 1.505 len 273 clip 0.000 pl 0.0001 vl 2.5345 gn 0.442 t 341s
+[ppo:standard] 20/20 R 1.444 KL -0.0002 H 0.750 len 354 clip 0.000 pl 0.0000 vl 1.6934 gn 0.709 t 361s
+[ppo:standard] done in 361s, peak VRAM 6.67 GiB -> /kaggle/working/pa2/outputs/task2_ppo/standard
+
+>>> task2_ppo.evaluate --config configs/ppo.yaml --adapter outputs/task2_ppo/standard --name standard
+[eval:standard] reward 1.419±1.506 KL 0.0000 H 0.966 len 309 trunc 0.09
+
+>>> task2_ppo.evaluate --config configs/ppo.yaml --adapter none --name sft
+[eval:sft] reward 1.436±1.518 KL 0.0000 H 0.997 len 291 trunc 0.08
+
+>>> task2_ppo.analyze_clipping --config configs/ppo.yaml
+Cached PPO rollouts: 32
+Required epsilon values: [0.05, 0.2, 0.5]
+Cache keys: ['clipped_at_max', 'effective_terminal_reward', 'old_logprobs', 'prompt_id', 'raw_terminal_reward', 'ref_logprobs', 'response', 'response_tokens', 'source_index', 'terminated_with_eos', 'values']
+Rebuilt 32 cached rollouts; skipped 0
+[clip-cache eps=0.05] step 0 clip 0.1543 affected 0.0761 Lclip -0.0114 Lunclip 0.0003 akl 1.08e-01
+[clip-cache eps=0.05] step 1 clip 0.1526 affected 0.0759 Lclip -0.0113 Lunclip 0.0004 akl 1.08e-01
+[clip-cache eps=0.05] step 2 clip 0.1554 affected 0.0783 Lclip -0.0113 Lunclip 0.0004 akl 1.07e-01
+[clip-cache eps=0.05] step 3 clip 0.1536 affected 0.0766 Lclip -0.0113 Lunclip 0.0004 akl 1.07e-01
+[clip-cache eps=0.05] step 4 clip 0.1526 affected 0.0761 Lclip -0.0113 Lunclip 0.0004 akl 1.07e-01
+[clip-cache eps=0.2] step 0 clip 0.0413 affected 0.0197 Lclip -0.0079 Lunclip 0.0003 akl 1.08e-01
+[clip-cache eps=0.2] step 1 clip 0.0414 affected 0.0200 Lclip -0.0079 Lunclip 0.0003 akl 1.08e-01
+[clip-cache eps=0.2] step 2 clip 0.0413 affected 0.0199 Lclip -0.0078 Lunclip 0.0003 akl 1.07e-01
+[clip-cache eps=0.2] step 3 clip 0.0410 affected 0.0197 Lclip -0.0078 Lunclip 0.0004 akl 1.08e-01
+[clip-cache eps=0.2] step 4 clip 0.0413 affected 0.0200 Lclip -0.0077 Lunclip 0.0005 akl 1.07e-01
+[clip-cache eps=0.5] step 0 clip 0.0211 affected 0.0101 Lclip -0.0054 Lunclip 0.0003 akl 1.08e-01
+[clip-cache eps=0.5] step 1 clip 0.0208 affected 0.0100 Lclip -0.0053 Lunclip 0.0004 akl 1.07e-01
+[clip-cache eps=0.5] step 2 clip 0.0206 affected 0.0099 Lclip -0.0053 Lunclip 0.0004 akl 1.08e-01
+[clip-cache eps=0.5] step 3 clip 0.0208 affected 0.0100 Lclip -0.0052 Lunclip 0.0005 akl 1.07e-01
+[clip-cache eps=0.5] step 4 clip 0.0208 affected 0.0100 Lclip -0.0052 Lunclip 0.0004 akl 1.07e-01
+[ppo:fork_eps0p05_kl0p1] updates=8 eps=0.05 kl_beta=0.1 epochs=2
+[ppo:fork_eps0p05_kl0p1] 1/8 R 0.521 KL -0.0000 H 1.264 len 512 clip 0.000 pl -0.0001 vl 2.0980 gn 0.219 t 30s
+[ppo:fork_eps0p05_kl0p1] 2/8 R 2.125 KL -0.0005 H 1.075 len 306 clip 0.000 pl -0.0001 vl 2.2233 gn 0.280 t 48s
+[ppo:fork_eps0p05_kl0p1] 3/8 R 2.029 KL -0.0002 H 0.975 len 46 clip 0.000 pl -0.0008 vl 2.4790 gn 0.870 t 52s
+[ppo:fork_eps0p05_kl0p1] 4/8 R 2.156 KL 0.0008 H 0.912 len 83 clip 0.000 pl -0.0001 vl 2.9961 gn 0.604 t 58s
+[ppo:fork_eps0p05_kl0p1] 5/8 R 2.301 KL 0.0001 H 0.469 len 512 clip 0.000 pl 0.0002 vl 2.5411 gn 0.174 t 87s
+[ppo:fork_eps0p05_kl0p1] 6/8 R 0.294 KL -0.0008 H 1.294 len 42 clip 0.000 pl -0.0001 vl 3.1318 gn 0.972 t 90s
+[ppo:fork_eps0p05_kl0p1] 7/8 R 0.328 KL -0.0001 H 1.334 len 512 clip 0.000 pl 0.0001 vl 2.6350 gn 0.241 t 120s
+[ppo:fork_eps0p05_kl0p1] 8/8 R 1.731 KL -0.0008 H 0.287 len 15 clip 0.000 pl 0.0002 vl 3.4363 gn 1.429 t 122s
+[ppo:fork_eps0p05_kl0p1] done in 122s, peak VRAM 6.27 GiB -> /kaggle/working/pa2/outputs/task2_ppo/fork_eps0p05_kl0p1
+[eval:fork_eps0p05_kl0p1] reward 1.629±1.392 KL -0.0001 H 0.994 len 311 trunc 0.06
+[ppo:fork_eps0p2_kl0p1] updates=8 eps=0.2 kl_beta=0.1 epochs=2
+[ppo:fork_eps0p2_kl0p1] 1/8 R 0.521 KL -0.0000 H 1.264 len 512 clip 0.000 pl -0.0001 vl 2.0980 gn 0.219 t 31s
+[ppo:fork_eps0p2_kl0p1] 2/8 R 2.125 KL -0.0005 H 1.075 len 306 clip 0.000 pl -0.0001 vl 2.2233 gn 0.280 t 51s
+[ppo:fork_eps0p2_kl0p1] 3/8 R 2.029 KL -0.0002 H 0.975 len 46 clip 0.000 pl -0.0008 vl 2.4790 gn 0.870 t 54s
+[ppo:fork_eps0p2_kl0p1] 4/8 R 2.156 KL 0.0008 H 0.912 len 83 clip 0.000 pl -0.0001 vl 2.9961 gn 0.604 t 61s
+[ppo:fork_eps0p2_kl0p1] 5/8 R 2.301 KL 0.0001 H 0.469 len 512 clip 0.000 pl 0.0002 vl 2.5411 gn 0.174 t 91s
+[ppo:fork_eps0p2_kl0p1] 6/8 R 0.294 KL -0.0008 H 1.294 len 42 clip 0.000 pl -0.0001 vl 3.1318 gn 0.972 t 95s
+[ppo:fork_eps0p2_kl0p1] 7/8 R 0.328 KL -0.0001 H 1.334 len 512 clip 0.000 pl 0.0001 vl 2.6350 gn 0.241 t 127s
+[ppo:fork_eps0p2_kl0p1] 8/8 R 1.731 KL -0.0008 H 0.287 len 15 clip 0.000 pl 0.0002 vl 3.4363 gn 1.429 t 129s
+[ppo:fork_eps0p2_kl0p1] done in 129s, peak VRAM 6.27 GiB -> /kaggle/working/pa2/outputs/task2_ppo/fork_eps0p2_kl0p1
+[eval:fork_eps0p2_kl0p1] reward 1.629±1.392 KL -0.0001 H 0.994 len 311 trunc 0.06
+[ppo:fork_eps0p5_kl0p1] updates=8 eps=0.5 kl_beta=0.1 epochs=2
+[ppo:fork_eps0p5_kl0p1] 1/8 R 0.521 KL -0.0000 H 1.264 len 512 clip 0.000 pl -0.0001 vl 2.0980 gn 0.219 t 31s
+[ppo:fork_eps0p5_kl0p1] 2/8 R 2.125 KL -0.0005 H 1.075 len 306 clip 0.000 pl -0.0001 vl 2.2233 gn 0.280 t 49s
+[ppo:fork_eps0p5_kl0p1] 3/8 R 2.029 KL -0.0002 H 0.975 len 46 clip 0.000 pl -0.0008 vl 2.4790 gn 0.870 t 53s
+[ppo:fork_eps0p5_kl0p1] 4/8 R 2.156 KL 0.0008 H 0.912 len 83 clip 0.000 pl -0.0001 vl 2.9961 gn 0.604 t 59s
+[ppo:fork_eps0p5_kl0p1] 5/8 R 2.301 KL 0.0001 H 0.469 len 512 clip 0.000 pl 0.0002 vl 2.5411 gn 0.174 t 91s
+[ppo:fork_eps0p5_kl0p1] 6/8 R 0.294 KL -0.0008 H 1.294 len 42 clip 0.000 pl -0.0001 vl 3.1318 gn 0.972 t 94s
+[ppo:fork_eps0p5_kl0p1] 7/8 R 0.328 KL -0.0001 H 1.334 len 512 clip 0.000 pl 0.0001 vl 2.6350 gn 0.241 t 126s
+[ppo:fork_eps0p5_kl0p1] 8/8 R 1.731 KL -0.0008 H 0.287 len 15 clip 0.000 pl 0.0002 vl 3.4363 gn 1.429 t 128s
+[ppo:fork_eps0p5_kl0p1] done in 128s, peak VRAM 6.27 GiB -> /kaggle/working/pa2/outputs/task2_ppo/fork_eps0p5_kl0p1
+[eval:fork_eps0p5_kl0p1] reward 1.629±1.392 KL -0.0001 H 0.994 len 311 trunc 0.06
+
+eps  | held-out R | KL     | len | max update-KL | mean clip
+0.05 | 1.629      | -0.0001 | 311 | 7.82e-06      | 0.000
+0.2  | 1.629      | -0.0001 | 311 | 7.82e-06      | 0.000
+0.5  | 1.629      | -0.0001 | 311 | 7.82e-06      | 0.000
+
+>>> task2_ppo.ablate_kl --config configs/ppo.yaml
+KL beta conditions: [0.0, 0.1, 0.2]
+Fork update budget: 8
+[eval:midpoint] reward 1.606±1.621 KL -0.0000 H 0.999 len 312 trunc 0.08
+[ppo:fork_eps0p2_kl0] updates=8 eps=0.2 kl_beta=0.0 epochs=2
+[ppo:fork_eps0p2_kl0] 1/8 R 0.521 KL -0.0000 H 1.264 len 512 clip 0.000 pl -0.0002 vl 2.0984 gn 0.219 t 29s
+[ppo:fork_eps0p2_kl0] 2/8 R 2.125 KL -0.0005 H 1.076 len 306 clip 0.000 pl 0.0001 vl 2.2227 gn 0.279 t 46s
+[ppo:fork_eps0p2_kl0] 3/8 R 2.029 KL 0.0011 H 0.975 len 46 clip 0.000 pl -0.0001 vl 2.4817 gn 0.873 t 50s
+[ppo:fork_eps0p2_kl0] 4/8 R 1.942 KL 0.0003 H 0.902 len 86 clip 0.000 pl -0.0000 vl 2.7465 gn 0.480 t 55s
+[ppo:fork_eps0p2_kl0] 5/8 R 1.532 KL -0.0002 H 0.459 len 512 clip 0.000 pl -0.0001 vl 3.2065 gn 0.182 t 84s
+[ppo:fork_eps0p2_kl0] 6/8 R 0.943 KL -0.0002 H 1.460 len 83 clip 0.000 pl -0.0000 vl 3.1334 gn 0.531 t 90s
+[ppo:fork_eps0p2_kl0] 7/8 R 0.509 KL -0.0003 H 1.632 len 512 clip 0.000 pl -0.0001 vl 2.4662 gn 0.245 t 118s
+[ppo:fork_eps0p2_kl0] 8/8 R 1.661 KL -0.0001 H 0.354 len 19 clip 0.000 pl 0.0003 vl 3.3847 gn 1.888 t 121s
+[ppo:fork_eps0p2_kl0] done in 121s, peak VRAM 6.31 GiB -> /kaggle/working/pa2/outputs/task2_ppo/fork_eps0p2_kl0
+[eval:fork_eps0p2_kl0] reward 1.635±1.441 KL -0.0000 H 1.012 len 293 trunc 0.09
+[ppo:fork_eps0p2_kl0p2] updates=8 eps=0.2 kl_beta=0.2 epochs=2
+[ppo:fork_eps0p2_kl0p2] 1/8 R 0.521 KL -0.0000 H 1.264 len 512 clip 0.000 pl -0.0002 vl 2.0982 gn 0.219 t 30s
+[ppo:fork_eps0p2_kl0p2] 2/8 R 2.146 KL -0.0003 H 1.119 len 317 clip 0.000 pl -0.0000 vl 2.3295 gn 0.274 t 49s
+[ppo:fork_eps0p2_kl0p2] 3/8 R 1.107 KL 0.0009 H 0.891 len 56 clip 0.000 pl 0.0003 vl 1.8041 gn 0.794 t 53s
+[ppo:fork_eps0p2_kl0p2] 4/8 R 1.437 KL 0.0008 H 0.845 len 74 clip 0.000 pl -0.0000 vl 2.7835 gn 0.537 t 59s
+[ppo:fork_eps0p2_kl0p2] 5/8 R 3.115 KL 0.0003 H 0.590 len 509 clip 0.000 pl -0.0001 vl 2.9938 gn 0.207 t 89s
+[ppo:fork_eps0p2_kl0p2] 6/8 R 0.725 KL 0.0006 H 1.235 len 63 clip 0.000 pl 0.0001 vl 3.3892 gn 0.591 t 93s
+[ppo:fork_eps0p2_kl0p2] 7/8 R 0.031 KL -0.0004 H 1.257 len 512 clip 0.000 pl 0.0000 vl 2.7809 gn 0.202 t 124s
+[ppo:fork_eps0p2_kl0p2] 8/8 R 1.661 KL 0.0008 H 0.354 len 19 clip 0.000 pl -0.0008 vl 3.4322 gn 1.693 t 126s
+[ppo:fork_eps0p2_kl0p2] done in 127s, peak VRAM 6.27 GiB -> /kaggle/working/pa2/outputs/task2_ppo/fork_eps0p2_kl0p2
+[eval:fork_eps0p2_kl0p2] reward 1.555±1.497 KL -0.0000 H 1.004 len 293 trunc 0.06
+
+midpoint      | R 1.606 | KL -0.0000 | H 0.999 | len 312
+beta_KL=0    | R 1.635 | KL -0.0000 | H 1.012 | len 293
+beta_KL=0.1  | R 1.629 | KL -0.0001 | H 0.994 | len 311
+beta_KL=0.2  | R 1.555 | KL -0.0000 | H 1.004 | len 293
+
+>>> task3_grpo.continue_train --config configs/grpo.yaml --run-name standard
+[grpo:standard] updates=20 K=4 loss_type=grpo micro=4
+[grpo:standard] 1/20 R 2.184 std 0.815 zero 0.00 KL 0.0001 H 1.143 len 512 gn 0.000 t 32s
+[grpo:standard] 2/20 R 2.542 std 0.063 zero 0.00 KL 0.0000 H 1.219 len 391 gn 0.171 t 62s
+[grpo:standard] 3/20 R 1.186 std 0.274 zero 0.00 KL 0.0006 H 1.258 len 71 gn 0.443 t 71s
+[grpo:standard] 4/20 R 2.059 std 0.336 zero 0.00 KL 0.0001 H 0.968 len 72 gn 0.266 t 77s
+[grpo:standard] 5/20 R 0.822 std 1.033 zero 0.00 KL 0.0001 H 0.606 len 482 gn 0.012 t 109s
+[grpo:standard] 6/20 R 0.123 std 0.325 zero 0.00 KL -0.0000 H 1.625 len 81 gn 0.407 t 120s
+[grpo:standard] 7/20 R 0.849 std 0.553 zero 0.00 KL -0.0001 H 1.446 len 512 gn 0.000 t 151s
+[grpo:standard] 8/20 R 1.567 std 0.168 zero 0.00 KL -0.0003 H 0.362 len 14 gn 2.079 t 153s
+[grpo:standard] 9/20 R 0.682 std 0.351 zero 0.00 KL 0.0001 H 0.583 len 512 gn 0.000 t 185s
+[grpo:standard] 10/20 R 1.931 std 0.044 zero 0.00 KL 0.0001 H 1.104 len 478 gn 0.120 t 217s
+[grpo:standard] 11/20 R 2.817 std 0.690 zero 0.00 KL 0.0001 H 0.908 len 380 gn 0.091 t 250s
+[grpo:standard] 12/20 R 2.699 std 0.250 zero 0.00 KL 0.0005 H 1.198 len 138 gn 0.275 t 264s
+[grpo:standard] 13/20 R 1.437 std 0.589 zero 0.00 KL 0.0002 H 1.139 len 501 gn 0.084 t 298s
+[grpo:standard] 14/20 R -0.046 std 1.431 zero 0.00 KL 0.0003 H 1.412 len 319 gn 0.201 t 332s
+[grpo:standard] 15/20 R 2.647 std 0.281 zero 0.00 KL 0.0001 H 1.116 len 433 gn 0.108 t 366s
+[grpo:standard] 16/20 R 3.186 std 0.286 zero 0.00 KL 0.0002 H 1.341 len 209 gn 0.210 t 383s
+[grpo:standard] 17/20 R 2.240 std 0.457 zero 0.00 KL -0.0000 H 1.100 len 396 gn 0.107 t 416s
+[grpo:standard] 18/20 R -0.981 std 0.977 zero 0.00 KL 0.0005 H 1.776 len 181 gn 0.270 t 450s
+[grpo:standard] 19/20 R 0.356 std 0.848 zero 0.00 KL 0.0000 H 0.723 len 479 gn 0.132 t 484s
+[grpo:standard] 20/20 R 0.137 std 0.998 zero 0.00 KL -0.0001 H 0.751 len 256 gn 0.490 t 516s
+[grpo:standard] done in 516s, peak VRAM 8.04 GiB -> /kaggle/working/pa2/outputs/task3_grpo/standard
+
+>>> task3_grpo.evaluate --config configs/grpo.yaml --adapter outputs/task3_grpo/standard --name standard
+[eval:standard] reward 1.701±1.260 KL 0.0001 H 0.978 len 303 trunc 0.06
+
+>>> task3_grpo.analyze_group_size --config configs/grpo.yaml
+Cached prompts: 24
+Group sizes to analyze: [2, 4, 8]
+Cache row keys: ['clipped_at_max', 'completion', 'completion_tokens', 'generation_index', 'prompt_id', 'reward', 'source_index', 'terminated_with_eos']
+
+prompt-difficulty bins: hard: R=-0.03, std=0.76, medium: R=2.06, std=0.60, easy: R=2.81, std=0.49
+K | groups | informative | weak@0.1 | mean std | centered var | adv corr vs K8 | sign agree | binarized informative (hard/med/easy)
+2 |     96 | 0.947       | 0.257    | 0.386    | 0.322        | 0.621          | 0.764      | 0.00/0.41/0.15
+4 |     48 | 0.958       | 0.079    | 0.550    | 0.483        | 0.882          | 0.873      | 0.00/0.74/0.27
+8 |     24 | 0.958       | 0.042    | 0.619    | 0.560        | 1.000          | 1.000      | 0.00/1.00/0.38
+
+>>> task3_grpo.compare_normalization --config configs/grpo.yaml
+Fork updates: 8
+Compare loss_type='grpo' vs loss_type='dr_grpo' from the identical supplied midpoint.
+[eval:midpoint] reward 1.648±1.456 KL 0.0000 H 0.972 len 302 trunc 0.09
+[grpo:fork_grpo] updates=8 K=4 loss_type=grpo micro=4
+[grpo:fork_grpo] 1/8 R 2.184 std 0.815 zero 0.00 KL 0.0001 H 1.143 len 512 gn 0.000 t 31s
+[grpo:fork_grpo] 2/8 R 2.542 std 0.063 zero 0.00 KL 0.0000 H 1.219 len 391 gn 0.171 t 60s
+[grpo:fork_grpo] 3/8 R 1.186 std 0.274 zero 0.00 KL 0.0006 H 1.258 len 71 gn 0.443 t 69s
+[grpo:fork_grpo] 4/8 R 2.059 std 0.336 zero 0.00 KL 0.0001 H 0.968 len 72 gn 0.266 t 75s
+[grpo:fork_grpo] 5/8 R 0.822 std 1.033 zero 0.00 KL 0.0001 H 0.606 len 482 gn 0.012 t 107s
+[grpo:fork_grpo] 6/8 R 0.123 std 0.325 zero 0.00 KL -0.0000 H 1.625 len 81 gn 0.407 t 117s
+[grpo:fork_grpo] 7/8 R 0.849 std 0.553 zero 0.00 KL -0.0001 H 1.446 len 512 gn 0.000 t 148s
+[grpo:fork_grpo] 8/8 R 1.567 std 0.168 zero 0.00 KL -0.0003 H 0.362 len 14 gn 2.079 t 151s
+[grpo:fork_grpo] done in 151s, peak VRAM 8.04 GiB -> /kaggle/working/pa2/outputs/task3_grpo/fork_grpo
+[eval:fork_grpo] reward 1.634±1.531 KL 0.0001 H 0.992 len 320 trunc 0.11
+[grpo:fork_dr_grpo] updates=8 K=4 loss_type=dr_grpo micro=4
+[grpo:fork_dr_grpo] 1/8 R 2.184 std 0.815 zero 0.00 KL 0.0001 H 1.143 len 512 gn 0.000 t 34s
+[grpo:fork_dr_grpo] 2/8 R 2.542 std 0.063 zero 0.00 KL 0.0000 H 1.219 len 391 gn 0.104 t 66s
+[grpo:fork_dr_grpo] 3/8 R 1.452 std 0.422 zero 0.00 KL 0.0003 H 1.163 len 49 gn 0.046 t 71s
+[grpo:fork_dr_grpo] 4/8 R 1.972 std 0.271 zero 0.00 KL -0.0003 H 0.944 len 77 gn 0.037 t 79s
+[grpo:fork_dr_grpo] 5/8 R -0.157 std 0.439 zero 0.00 KL 0.0000 H 0.543 len 512 gn 0.000 t 113s
+[grpo:fork_dr_grpo] 6/8 R 0.083 std 0.239 zero 0.00 KL 0.0003 H 1.482 len 58 gn 0.037 t 119s
+[grpo:fork_dr_grpo] 7/8 R 0.145 std 0.540 zero 0.00 KL 0.0002 H 1.475 len 512 gn 0.000 t 153s
+[grpo:fork_dr_grpo] 8/8 R 1.566 std 0.074 zero 0.00 KL -0.0007 H 0.309 len 16 gn 0.042 t 155s
+[grpo:fork_dr_grpo] done in 155s, peak VRAM 8.04 GiB -> /kaggle/working/pa2/outputs/task3_grpo/fork_dr_grpo
+[eval:fork_dr_grpo] reward 1.596±1.485 KL 0.0000 H 0.991 len 308 trunc 0.09
+
+loss    | held-out R | KL     | len  | train grad-mass share short/long | measured long/short norm
+grpo    | 1.634      | 0.0001 | 320 | 0.49/0.00                       | 0.18
+dr_grpo | 1.596      | 0.0000 | 308 | 0.28/0.00                       | 4.33
+
+>>> task4_safety.generate_responses --config configs/feedback.yaml
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+Policies: ['sft', 'dpo', 'ppo', 'grpo']
+XSTest rows: 450
+[sft] wrote 450 responses (mean 108.3 tokens) -> /kaggle/working/pa2/results/task4_safety/generated_sft.jsonl
+[dpo] wrote 450 responses (mean 109.5 tokens) -> /kaggle/working/pa2/results/task4_safety/generated_dpo.jsonl
+[ppo] wrote 450 responses (mean 108.4 tokens) -> /kaggle/working/pa2/results/task4_safety/generated_ppo.jsonl
+[grpo] wrote 450 responses (mean 108.2 tokens) -> /kaggle/working/pa2/results/task4_safety/generated_grpo.jsonl
+
+>>> task4_safety.make_audit_sheet --config configs/feedback.yaml
+Wrote fixed audit IDs: /kaggle/working/pa2/results/task4_safety/manual_audit_ids.csv
+Wrote blind sheet with 240 rows: /kaggle/working/pa2/results/task4_safety/manual_audit_sheet.csv
+Join these IDs to each policy's generated responses and label without viewing AI labels first.
+
+>>> task4_safety.judge_responses --config configs/feedback.yaml
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:24<00:24, 24.32s/it]Fetching 2 files: 100%|██████████| 2/2 [00:24<00:00, 12.16s/it]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:12<00:12, 12.23s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:14<00:00,  6.41s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:14<00:00,  7.28s/it]
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+Fixed Task 4 judge loaded: Qwen/Qwen2.5-3B-Instruct
+[sft] 450 responses, 0 already judged, 450 to judge
+[sft] judged 8/450
+[sft] judged 88/450
+[sft] judged 168/450
+[sft] judged 248/450
+[sft] judged 328/450
+[sft] judged 408/450
+[dpo] 450 responses, 0 already judged, 450 to judge
+[dpo] judged 8/450
+[dpo] judged 88/450
+[dpo] judged 168/450
+[dpo] judged 248/450
+[dpo] judged 328/450
+[dpo] judged 408/450
+[ppo] 450 responses, 0 already judged, 450 to judge
+[ppo] judged 8/450
+[ppo] judged 88/450
+[ppo] judged 168/450
+[ppo] judged 248/450
+[ppo] judged 328/450
+[ppo] judged 408/450
+[grpo] 450 responses, 0 already judged, 450 to judge
+[grpo] judged 8/450
+[grpo] judged 88/450
+[grpo] judged 168/450
+[grpo] judged 248/450
+[grpo] judged 328/450
+[grpo] judged 408/450
+
+>>> task4_safety.evaluate_safety --config configs/feedback.yaml
+(manual audit sheet has no labels yet)
+     safe_answer_rate over_refusal_rate unsafe_compliance_rate justified_refusal_rate ambiguous_rate mean_response_tokens
+sft              0.58               0.0                    0.0                  0.885            0.0           108.255556
+dpo             0.564               0.0                    0.0                   0.88            0.0           109.453333
+ppo             0.572               0.0                    0.0                  0.875            0.0           108.402222
+grpo            0.584               0.0                    0.0                   0.88            0.0           108.188889
+
+per-category over-refusal (SAFE) / unsafe-compliance (UNSAFE):
+policy                                        dpo  grpo  ppo  sft
+benchmark_class type                                             
+SAFE            definitions                   0.0   0.0  0.0  0.0
+                figurative_language           0.0   0.0  0.0  0.0
+                historical_events             0.0   0.0  0.0  0.0
+                homonyms                      0.0   0.0  0.0  0.0
+                nons_group_real_discr         0.0   0.0  0.0  0.0
+                privacy_fictional             0.0   0.0  0.0  0.0
+                privacy_public                0.0   0.0  0.0  0.0
+                real_group_nons_discr         0.0   0.0  0.0  0.0
+                safe_contexts                 0.0   0.0  0.0  0.0
+                safe_targets                  0.0   0.0  0.0  0.0
+UNSAFE          contrast_definitions          0.0   0.0  0.0  0.0
+                contrast_discr                0.0   0.0  0.0  0.0
+                contrast_figurative_language  0.0   0.0  0.0  0.0
+                contrast_historical_events    0.0   0.0  0.0  0.0
+                contrast_homonyms             0.0   0.0  0.0  0.0
+                contrast_privacy              0.0   0.0  0.0  0.0
+                contrast_safe_contexts        0.0   0.0  0.0  0.0
+                contrast_safe_targets         0.0   0.0  0.0  0.0
+
+>>> task5_feedback.evaluate_math --config configs/feedback.yaml --dataset gsm
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+Rows: 300
+Policies: ['sft', 'rlvr', 'rlaif']
+[gsm:sft] 8/300
+[gsm:sft] 16/300
+[gsm:sft] 24/300
+[gsm:sft] 32/300
+[gsm:sft] 40/300
+[gsm:sft] 48/300
+[gsm:sft] 56/300
+[gsm:sft] 64/300
+[gsm:sft] 72/300
+[gsm:sft] 80/300
+[gsm:sft] 88/300
+[gsm:sft] 96/300
+[gsm:sft] 104/300
+[gsm:sft] 112/300
+[gsm:sft] 120/300
+[gsm:sft] 128/300
+[gsm:sft] 136/300
+[gsm:sft] 144/300
+[gsm:sft] 152/300
+[gsm:sft] 160/300
+[gsm:sft] 168/300
+[gsm:sft] 176/300
+[gsm:sft] 184/300
+[gsm:sft] 192/300
+[gsm:sft] 200/300
+[gsm:sft] 208/300
+[gsm:sft] 216/300
+[gsm:sft] 224/300
+[gsm:sft] 232/300
+[gsm:sft] 240/300
+[gsm:sft] 248/300
+[gsm:sft] 256/300
+[gsm:sft] 264/300
+[gsm:sft] 272/300
+[gsm:sft] 280/300
+[gsm:sft] 288/300
+[gsm:sft] 296/300
+[gsm:sft] 300/300
+[gsm:rlvr] 8/300
+[gsm:rlvr] 16/300
+[gsm:rlvr] 24/300
+[gsm:rlvr] 32/300
+[gsm:rlvr] 40/300
+[gsm:rlvr] 48/300
+[gsm:rlvr] 56/300
+[gsm:rlvr] 64/300
+[gsm:rlvr] 72/300
+[gsm:rlvr] 80/300
+[gsm:rlvr] 88/300
+[gsm:rlvr] 96/300
+[gsm:rlvr] 104/300
+[gsm:rlvr] 112/300
+[gsm:rlvr] 120/300
+[gsm:rlvr] 128/300
+[gsm:rlvr] 136/300
+[gsm:rlvr] 144/300
+[gsm:rlvr] 152/300
+[gsm:rlvr] 160/300
+[gsm:rlvr] 168/300
+[gsm:rlvr] 176/300
+[gsm:rlvr] 184/300
+[gsm:rlvr] 192/300
+[gsm:rlvr] 200/300
+[gsm:rlvr] 208/300
+[gsm:rlvr] 216/300
+[gsm:rlvr] 224/300
+[gsm:rlvr] 232/300
+[gsm:rlvr] 240/300
+[gsm:rlvr] 248/300
+[gsm:rlvr] 256/300
+[gsm:rlvr] 264/300
+[gsm:rlvr] 272/300
+[gsm:rlvr] 280/300
+[gsm:rlvr] 288/300
+[gsm:rlvr] 296/300
+[gsm:rlvr] 300/300
+[gsm:rlaif] 8/300
+[gsm:rlaif] 16/300
+[gsm:rlaif] 24/300
+[gsm:rlaif] 32/300
+[gsm:rlaif] 40/300
+[gsm:rlaif] 48/300
+[gsm:rlaif] 56/300
+[gsm:rlaif] 64/300
+[gsm:rlaif] 72/300
+[gsm:rlaif] 80/300
+[gsm:rlaif] 88/300
+[gsm:rlaif] 96/300
+[gsm:rlaif] 104/300
+[gsm:rlaif] 112/300
+[gsm:rlaif] 120/300
+[gsm:rlaif] 128/300
+[gsm:rlaif] 136/300
+[gsm:rlaif] 144/300
+[gsm:rlaif] 152/300
+[gsm:rlaif] 160/300
+[gsm:rlaif] 168/300
+[gsm:rlaif] 176/300
+[gsm:rlaif] 184/300
+[gsm:rlaif] 192/300
+[gsm:rlaif] 200/300
+[gsm:rlaif] 208/300
+[gsm:rlaif] 216/300
+[gsm:rlaif] 224/300
+[gsm:rlaif] 232/300
+[gsm:rlaif] 240/300
+[gsm:rlaif] 248/300
+[gsm:rlaif] 256/300
+[gsm:rlaif] 264/300
+[gsm:rlaif] 272/300
+[gsm:rlaif] 280/300
+[gsm:rlaif] 288/300
+[gsm:rlaif] 296/300
+[gsm:rlaif] 300/300
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:02<00:02,  2.77s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  2.03s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  2.14s/it]
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+
+[gsm] policy | exact acc | format | len | win vs SFT (ties) | verifier-judge agree
+sft    | 0.283     | 0.350  | 274 | - | -
+rlvr   | 0.287     | 0.360  | 276 | 0.503 (286) | 0.920
+rlaif  | 0.287     | 0.360  | 275 | 0.495 (287) | 0.937
+
+>>> task5_feedback.score_perturbations --config configs/feedback.yaml
+Diagnostic problems: 20
+Variants/problem: ['clean_correct', 'corrupt_reasoning_correct_final', 'gold_distractor_wrong_final', 'good_reasoning_wrong_final', 'persuasive_filler_correct']
+Use exact_reward(...) for RLVR and PairwiseAIJudge(...) for RLAIF.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:03<00:03,  3.89s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:06<00:00,  2.89s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:06<00:00,  3.04s/it]
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+
+perturbation (vs clean)         | RLVR better/tie/wrong | RLAIF better/tie/wrong | order-consistent
+corrupt_reasoning_correct_final | 0.00/1.00/0.00        | 0.00/1.00/0.00         | 1.00
+good_reasoning_wrong_final      | 1.00/0.00/0.00        | 0.15/0.85/0.00         | 0.85
+gold_distractor_wrong_final     | 1.00/0.00/0.00        | 0.35/0.60/0.05         | 0.70
+persuasive_filler_correct       | 0.00/1.00/0.00        | 0.00/0.75/0.25         | 1.00
+S_reason: RLVR 0.00  RLAIF 0.00 | S_outcome: RLVR 1.00  RLAIF 0.25
+variant group rewards (exact | RLAIF): {'clean_correct': (1.0, 0.49), 'corrupt_reasoning_correct_final': (1.0, 0.5), 'good_reasoning_wrong_final': (0.0, 0.47), 'persuasive_filler_correct': (1.0, 0.59), 'gold_distractor_wrong_final': (0.0, 0.44)}
+
+>>> task5_feedback.evaluate_math --config configs/feedback.yaml --dataset transfer
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+Rows: 100
+Policies: ['sft', 'rlvr', 'rlaif']
+[transfer:sft] 8/100
+[transfer:sft] 16/100
+[transfer:sft] 24/100
+[transfer:sft] 32/100
+[transfer:sft] 40/100
+[transfer:sft] 48/100
+[transfer:sft] 56/100
+[transfer:sft] 64/100
+[transfer:sft] 72/100
+[transfer:sft] 80/100
+[transfer:sft] 88/100
+[transfer:sft] 96/100
+[transfer:sft] 100/100
+[transfer:rlvr] 8/100
+[transfer:rlvr] 16/100
+[transfer:rlvr] 24/100
+[transfer:rlvr] 32/100
+[transfer:rlvr] 40/100
+[transfer:rlvr] 48/100
+[transfer:rlvr] 56/100
+[transfer:rlvr] 64/100
+[transfer:rlvr] 72/100
+[transfer:rlvr] 80/100
+[transfer:rlvr] 88/100
+[transfer:rlvr] 96/100
+[transfer:rlvr] 100/100
+[transfer:rlaif] 8/100
+[transfer:rlaif] 16/100
+[transfer:rlaif] 24/100
+[transfer:rlaif] 32/100
+[transfer:rlaif] 40/100
+[transfer:rlaif] 48/100
+[transfer:rlaif] 56/100
+[transfer:rlaif] 64/100
+[transfer:rlaif] 72/100
+[transfer:rlaif] 80/100
+[transfer:rlaif] 88/100
+[transfer:rlaif] 96/100
+[transfer:rlaif] 100/100
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:02<00:02,  2.68s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  1.91s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  2.02s/it]
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+
+[transfer] policy | exact acc | format | len | win vs SFT (ties) | verifier-judge agree
+sft    | 0.440     | 0.570  | 164 | - | -
+rlvr   | 0.460     | 0.590  | 164 | 0.515 (79) | 0.770
+rlaif  | 0.440     | 0.570  | 163 | 0.525 (79) | 0.790
+
+>>> task5_feedback.compare_feedback --config configs/feedback.yaml
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:03<00:03,  3.91s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:06<00:00,  2.89s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:06<00:00,  3.04s/it]
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+ dataset policy  exact_acc  format  mean_tokens  win_vs_sft  ties  verifier_judge_agree  acc_drop_from_gsm
+     gsm    sft      0.283    0.35      274.330         NaN   NaN                   NaN                NaN
+     gsm   rlvr      0.287    0.36      275.877       0.503 286.0                 0.920                NaN
+     gsm  rlaif      0.287    0.36      275.450       0.495 287.0                 0.937                NaN
+transfer    sft      0.440    0.57      163.960         NaN   NaN                   NaN             -0.157
+transfer   rlvr      0.460    0.59      164.070       0.515  79.0                 0.770             -0.173
+transfer  rlaif      0.440    0.57      162.980       0.525  79.0                 0.790             -0.153
+
+S_reason RLVR=0.00 RLAIF=0.00 | S_outcome RLVR=1.00 RLAIF=0.25
+cost per K=4 group: RLVR 0.005 ms vs RLAIF 2.48 s (6 judge calls)
+
+>>> report.make_figures
+Task 1
+  wrote figures/t1_dpo_summary.pdf
+  wrote figures/t1_length_strata.pdf
+  wrote figures/t1_train_curves.pdf
+Task 2
+  wrote figures/t2_ppo_standard.pdf
+  wrote figures/t2_clip_cached.pdf
+  wrote figures/t2_clip_forks.pdf
+  wrote figures/t2_kl_forks.pdf
+Task 3
+  wrote figures/t3_grpo_standard.pdf
+  wrote figures/t3_group_size.pdf
+  wrote figures/t3_norm_grad_share.pdf
+  wrote figures/t3_norm_forks.pdf
+Task 4
+  wrote figures/t4_safety_labels.pdf
+Task 5
+  wrote figures/t5_diagnostics.pdf
+wrote report/tables.md
+
+done: t1 t2 t3 t4 t5 fig

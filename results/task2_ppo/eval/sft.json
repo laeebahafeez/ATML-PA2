@@ -1,0 +1,44 @@
+{
+  "name": "sft",
+  "adapter": null,
+  "max_new_tokens": 768,
+  "n": 64,
+  "reward": {
+    "n": 64,
+    "mean": 1.4362907409667969,
+    "std": 1.5181777764966071,
+    "median": 1.72119140625,
+    "iqr": 2.08709716796875
+  },
+  "response_tokens": {
+    "n": 64,
+    "mean": 290.609375,
+    "std": 264.3947461412752,
+    "median": 230.0,
+    "iqr": 449.0
+  },
+  "truncation_rate": 0.078125,
+  "kl_seq_sum": {
+    "n": 64,
+    "mean": 0.0,
+    "std": 0.0,
+    "median": 0.0,
+    "iqr": 0.0
+  },
+  "kl_token_mean_per_seq": {
+    "n": 64,
+    "mean": 0.0,
+    "std": 0.0,
+    "median": 0.0,
+    "iqr": 0.0
+  },
+  "entropy_token_mean_per_seq": {
+    "n": 64,
+    "mean": 0.9704952963797093,
+    "std": 0.4599484746188247,
+    "median": 0.9272531084664795,
+    "iqr": 0.5781605505830913
+  },
+  "kl": 0.0,
+  "entropy": 0.9970526638591961
+}

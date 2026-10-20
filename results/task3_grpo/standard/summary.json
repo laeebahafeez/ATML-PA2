@@ -1,0 +1,15 @@
+{
+  "run_name": "standard",
+  "loss_type": "grpo",
+  "updates": 20,
+  "num_generations": 4,
+  "prompts_per_update": 1,
+  "clip_epsilon": 0.2,
+  "kl_beta": 0.1,
+  "max_completion_length": 512,
+  "seed": 6304,
+  "wall_clock_s": 516.3824576650004,
+  "peak_vram_gib": 8.036595821380615,
+  "gpu": "Tesla T4",
+  "adapter": "outputs/task3_grpo/standard"
+}
